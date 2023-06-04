@@ -1,0 +1,95 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="content-wrapper">
+  <!-- Content -->
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Client / Contact /</span> list</h4>
+    <!-- Basic Bootstrap Table -->
+    <div class="card">
+      <h5 class="card-header"><a href="{{ url_for('client.client_contact_add') }}" class="btn btn-primary btn-sm"><i class="menu-icon tf-icons bx bx-user-plus"></i> Add record </a></h5>
+      <div class="text-nowrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Contact name</th>
+              <th>Company</th>
+              <th>Email</th>
+              <th>Telephone</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            <tr>
+              <td>Olanrewaju Soyemi</td>
+              <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>SOAS Technology</strong></td>
+              <td><a href="mailto:sample@email.com">sample@email.com</a></td>
+              <td><a href="tel:08123456789">08123456789</a></td>
+              <td><span class="badge bg-label-primary me-1">Active</span></td>
+              <td>
+                <div class="dropdown">
+                  <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                  </button>
+                  <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="{{ url_for('client.client_contact_edit', id=1) }}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                    <button class="dropdown-item delete" id="delete_1" data-id="1"><i class="bx bx-trash me-1"></i> Delete</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--/ Basic Bootstrap Table -->
+
+  </div>
+  <!-- / Content -->
+
+  <div class="content-backdrop fade"></div>
+</div>
+{% endblock %}
+
+
+
+
+
+{% block scripts %}
+  <script type="text/javascript">
+    $('.delete').click(function () {
+      id = $(this).attr('id')
+
+      userid = document.getElementById(id).dataset.id
+
+      $('#user_id').val(userid)
+
+      $('#delete_modal').modal('show')
+    })
+  </script>
+{% endblock %}
+
+  {% block modals %}
+  <div class="modal fade" id="delete_modal" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Delete Record</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6> Are you sure to delete record?</h6>
+        </div>
+        <div class="modal-footer">
+          <form method="DELETE" action="{{ url_for('client.client_contact_delete') }}">
+            <input type="hidden" name="id" id="user_id">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-danger">Yes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+

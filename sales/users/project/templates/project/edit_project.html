@@ -1,0 +1,143 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="content-wrapper">
+<div class="container-xxl flex-grow-1 container-p-y">
+  <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project /</span> Update Details</h4>
+  <!-- Basic Layout & Basic with Icons -->
+  <div class="row">
+    
+    <div class="col-xxl">
+      <div class="card mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h5 class="mb-0">Project Information</h5>
+          <small class="text-muted float-end"><a href="{{ url_for('project.project_list') }}"><i class="bx bx-list-ul"></i> Back to list</a></small>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{{ url_for('project.save_new_project') }}">
+            <div class="row">
+              <div class="col-xs-12 col-md-7">
+                    <form>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-name">project name</label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control" id="basic-default-name" placeholder="project name">
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-contact">Project type</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" name="contact">
+                              <option value="" selected>--select project type--</option>
+                              <option value="">Onsite</option>
+                              <option value="">Virtual</option>
+                              <option value="">Virtual & Onsite</option>
+                              <option value="">Email</option>
+                            </select>
+                            <input type="text" name="address" class="form-control mt-1" placeholder="enter address for onsite project">
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-company">Company</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" name="client">
+                              <option value="" selected>--select client--</option>
+                              <option value="">SOAS Technology</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-contact">Contact person</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" name="contact">
+                              <option value="" selected>--select contact persons--</option>
+                              <option value="">Soyemi Olanrewaju</option>
+                            </select>
+                            <div class="btn btn-secondary btn-sm mt-2" style="margin-right: 5px" id="3129" onclick="remove_contact()">
+                              <input type="hidden" name="crdt_contact" value="Olanrewaju Soyemi, soyemi.olanrewaju1@gmail.com, sales, 1234567890">
+                                Olanrewaju Soyemi
+                              <span class="bx bx-user-minus"></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-team">Sales Lead</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" name="team_lead">
+                              <option value="" selected>--select team lead--</option>
+                              <option value="">Soyemi Olanrewaju</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-team">Sales Team</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" name="team">
+                              <option value="" selected>--select team--</option>
+                              <option value="">Soyemi Olanrewaju</option>
+                            </select>
+                            <div class="btn btn-secondary btn-sm mt-2" style="margin-right: 5px" id="3129" onclick="remove_contact()">
+                              <input type="hidden" name="crdt_contact" value="Olanrewaju Soyemi, soyemi.olanrewaju1@gmail.com, sales, 1234567890">
+                                Olanrewaju Soyemi
+                              <span class="bx bx-user-minus"></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-message">Project Comment <small>(optional)</small></label>
+                          <div class="col-sm-10">
+                            <textarea id="basic-default-message" class="form-control" placeholder="project comment (optional)" aria-label="Hi, Do you have a moment to talk Joe?" aria-describedby="basic-icon-default-message2"></textarea>
+                          </div>
+                        </div>
+                        <div class="row justify-content-end">
+                          <div class="col-sm-10">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                          </div>
+                        </div>
+                      </form>
+              </div>
+              <div class="col-xs-12 col-md-5">
+                <div class="card-body">
+                  <div class="">
+                    <h5 class="card-title">Project Name: <span id="project_name">France Sales Target</span></h5>
+
+                      <div class="card-subtitle text-muted mb-3"><b>Project type:</b> <br>
+
+                        <span id="project_type">Onsite</span></div>
+
+                      <div class="card-subtitle text-muted mb-3"><b>Client:</b> <br>
+
+                        <span id="client">SOAS Technology</span></div>
+
+                      <div class="card-subtitle text-muted mb-3"><b>Contact person(s):</b> <br>
+
+                        <span id="contact_person">Soyemi Olanrewaju</span></div>
+
+                      <div class="card-subtitle text-muted mb-3"><b>Sales Lead:</b> <br>
+
+                        <span id="sales_lead">Atanda Samuel</span></div>
+
+                      <div class="card-subtitle text-muted mb-3"><b>Sales Team (s):</b> <br>
+
+                        <span id="sales_team">Bello Rasheed, Taiwo Ishola</span></div>
+
+                      <div class="card-subtitle text-muted mb-3"><b>Project comment:</b> <br>
+
+                        <span id="project_comment">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
+                        incididunt ut labore et dolore magna aliqua.</span>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="content-backdrop fade"></div>
+</div>
+{% endblock %}
+
+

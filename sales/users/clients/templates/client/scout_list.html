@@ -1,0 +1,185 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="content-wrapper">
+  <!-- Content -->
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Scouting /</span> prospect list</h4>
+    <!-- Basic Bootstrap Table -->
+    <div class="card">
+      <h5 class="card-header"><a href="{{ url_for('client.add_scout') }}" class="btn btn-primary btn-sm"><i class="menu-icon tf-icons bx bx-user-plus"></i> Add company</a></h5>
+      <div class="text-nowrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Company's name</th>
+              <th>Address</th>
+              <th>Email</th>
+              <th>Industry</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            <tr>
+              <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>SOAS Technology</strong></td>
+              <td> <span data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="37B Fola Sibo Lekki phase 1, Victoria island Lagos state">37B Fola Sibo Lekki phase 1, Vict.....</span></td>
+              <td><a href="mailto:sample@email.com">sample@email.com</a></td>
+              <td>Digital Agency</td>
+              <td><span class="badge bg-label-primary me-1">pending</span></td>
+              <td>
+                <div class="dropdown">
+                  <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                  </button>
+                  <div class="dropdown-menu" style="">
+                    <button class="dropdown-item" id="s_1" onclick="view_scout('s_1')" data-name="SOAS Technology" data-address="37B Fola Sibo Lekki phase 1, Victoria island Lagos state" data-email="sample@email.com" data-industry="Digital Agency" data-comment="">
+                      <i class="bx bx-folder-open me-1"></i> view 
+                    </button>
+                    <button class="dropdown-item delete" id="delete_1" data-id="1"><i class="bx bx-trash me-1"></i> Delete</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+  <!-- / Content -->
+
+  <div class="content-backdrop fade"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript">
+    $('.delete').click(function () {
+      id = $(this).attr('id')
+
+      userid = document.getElementById(id).dataset.id
+
+      $('#uid').val(userid)
+
+      $('#delete_modal').modal('show')
+    });
+
+
+    const view_scout = (id)=>{
+      name = document.getElementById(id).dataset.name 
+      address = document.getElementById(id).dataset.address
+      email = document.getElementById(id).dataset.email
+      industry = document.getElementById(id).dataset.industry
+      comment = document.getElementById(id).dataset.comment
+
+      $('#scompany').val(name)
+      $('#saddress').val(address)
+      $('#semail').val(email)
+      $('#sindustry').val(industry)
+      $('#scomment').val(comment)
+
+      $('#view_scouting').modal('show')
+    }
+  </script>
+{% endblock %}
+
+  {% block modals %}
+  <div class="modal fade" id="delete_modal" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Delete Record</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6> Are you sure to delete record?</h6>
+        </div>
+        <div class="modal-footer">
+          <form method="DELETE" action="{{ url_for('client.client_delete') }}">
+            <input type="hidden" name="id" id="id">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-danger">Yes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="view_scouting" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Add contact person</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="patch" action="{{ url_for('client.update_scout') }}" id="updateform">
+            <input type="hidden" name="id" id="sid">
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cname">Company Name</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-company" class="input-group-text"><i class="bx bx-user"></i></span>
+                  <input type="text" class="form-control" id="scompany">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cemail">Email </label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                  <input type="text" class="form-control" id="semail">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cposition">Industry</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
+                  <input type="text" class="form-control" id="sindustry">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Address</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-address" class="input-group-text"><i class="bx bx-building"></i></span>
+                  <input type="text" class="form-control phone-mask" id="saddress">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-comment">Comment</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-comment" class="input-group-text"><i class="bx bx-message-square"></i></span>
+                  <textarea class="form-control" id="scomment"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Status</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-status" class="input-group-text"><i class="bx bxs-cog"></i></span>
+                  <select class="form-select" name="">
+                    <option value="">--select status--</option>
+                    <option value="pending" selected>Pending</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" form="updateform">Update</button> 
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+

@@ -1,0 +1,447 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="content-wrapper">
+  <!-- Content -->
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project /</span> Kalatuta Project</h4>
+    <!-- Basic Bootstrap Table -->
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <!-- Client info -->
+          <div class="col-md-3" id="info">
+            <div class="card mb-3">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img class="card-img card-img-left" src="{{ url_for('static', filename='assets/img/elements/12.jpg') }}" alt="Card image">
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h5 class="card-title mb-0">SOAS Technology</h5>
+                    <small class="text-muted">Digital Service</small><br>
+                    <small class="text-muted">12, Aderinkomi surulere lagos.</small> <br>
+                    <span class="badge bg-label-primary">Onsite project</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-0">
+                <div class="col-md-12">
+                  <div class="divider divider-info">
+                    <div class="divider-text">Contact person's</div>
+                  </div>
+                  <a class="dropdown-item p-1 m-1" href="#">
+                    <div class="d-flex">
+                      <div class="flex-shrink-0 me-3">
+                        <div class="avatar avatar-online">
+                          <img src="{{ url_for('static', filename='assets/img/avatars/1.png') }}" alt="" class="w-px-40 h-auto rounded-circle">
+                        </div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <span class="fw-semibold d-block">Soyemi Olanrewaju</span>
+                        <small class="text-muted">Team Lead </small><br>
+                        <small class="text-muted">sample@email.com </small>
+                      </div>
+                    </div>
+                  </a>
+                  <div class="divider divider-primary">
+                    <div class="divider-text">Sales Team</div>
+                  </div>
+                  <div class="card overflow-hidden mb-4" style="height: 300px">
+                    <div class="card-body ps ps--active-y p-1" id="vertical-example2">
+                    {% for i in range(5) %}
+                    <a class="dropdown-item p-1 m-1" href="#">
+                      <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                          <div class="avatar avatar-online">
+                            <img src="{{ url_for('static', filename='assets/img/avatars/1.png') }}" alt="" class="w-px-40 h-auto rounded-circle">
+                          </div>
+                        </div>
+                        <div class="flex-grow-1">
+                          <span class="fw-semibold d-block">Soyemi Olanrewaju</span>
+                          <small class="text-muted">Team Lead </small> <br>
+                          <small class="text-muted">sample@email.com </small>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}
+                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+                      <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                    </div>
+                    <div class="ps__rail-y" style="top: 0px; height: 232px; right: 0px;">
+                      <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 35px;"></div>
+                    </div>
+                    </div>                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- // end client info -->
+
+          <!-- Details -->
+          <div class="col-md-9" id="details">
+            <div class="card overflow-hidden mb-4" style="height: 700px;">
+              <h5 class="card-header">
+                Project progress <br>
+                <div class="progress mt-3 mb-3">
+                  <div class="progress-bar bg-primary progress-bar-striped shadow-none" role="progressbar" style="width: 25%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">Initiated</div>
+                  <div class="progress-bar bg-info progress-bar-striped shadow-none" role="progressbar" style="width: 25%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">In-progress</div>
+                  <div class="progress-bar bg-warning progress-bar-striped shadow-none" role="progressbar" style="width: 25%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Onboarding</div>
+                  <div class="progress-bar bg-success progress-bar-striped shadow-none" role="progressbar" style="width: 25%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Completed</div>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#addprojectelement"><i class="bx bx-plus"></i> Add item</button>
+              </h5>
+
+              <div class="card-body ps ps--active-y" id="vertical-example">
+                <div class="divider divider-primary">
+                  <div class="divider-text">Project report</div>
+                </div>
+                {% for i in range(10) %}
+                <div class="card mb-2">
+                  <div class="card-body">
+                    <h5 class="card-title">Reporting subject</h5>
+                    <p class="card-text">
+                      With supporting text below as a natural lead-in to additional content natural lead-in to
+                      additional content.
+                    </p>
+                    <p class="card-text">
+                    <small class="text-muted">Created by: Soyemi Olanrewaju | datetime: 13th May, 2023 10:30:45am</small> <br>
+                    <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
+                      <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="Lilian Fuller">
+                        <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle">
+                      </li>
+                      <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="Sophia Wilkerson">
+                        <img src="{{ url_for('static', filename='assets/img/avatars/6.png') }}" alt="Avatar" class="rounded-circle">
+                      </li>
+                      <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="Christina Parker">
+                        <img src="{{ url_for('static', filename='assets/img/avatars/7.png') }}" alt="Avatar" class="rounded-circle">
+                      </li>
+                    </ul>
+                    <small class="text-muted">Comment: <span>4</span></small> <br>
+                    <small class="text-muted">Last updated 3 mins ago</small>
+                    <p class="mt-2">
+                      <small class="badge bg-label-primary mr-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#vw_{{ loop.index }}" aria-expanded="false" aria-controls="vw_{{ loop.index }}" onclick="close_comment('cm_{{ loop.index }}')">view</small>
+                      <small class="badge bg-label-primary mr-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cm_{{ loop.index }}" aria-expanded="false" aria-controls="cm_{{ loop.index }}" onclick="close_view('vw_{{ loop.index }}')">add comment</small>
+                    </p>
+                    <!-- view details -->
+                    <div class="collapse" id="vw_{{ loop.index }}">
+                      <div class="d-grid d-sm-flex p-1 border">
+                        <div class="nav-align-top mb-4" style="width: 100% !important">
+                          <ul class="nav nav-pills mb-3" role="tablist">
+                            <li class="nav-item">
+                              <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-pod_{{loop.index}}" aria-controls="navs-pills-top-pod_{{loop.index}}" aria-selected="true">
+                              Minutes Note
+                              </button>
+                            </li>
+                            <li class="nav-item">
+                              <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-actn_{{loop.index}}" aria-controls="navs-pills-top-actn_{{loop.index}}" aria-selected="false">
+                              Actionable
+                              </button>
+                            </li>
+                            <li class="nav-item">
+                              <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-dvrb_{{loop.index}}" aria-controls="navs-pills-top-dvrb_{{loop.index}}" aria-selected="false">
+                              Deliverables
+                              </button>
+                            </li>
+                          </ul>
+                          <div class="tab-content">
+                            <div class="tab-pane fade active show" id="navs-pills-top-pod_{{loop.index}}" role="tabpanel">
+                              {% set vl = 'Icing pastry pudding oat cake. Lemon drops cotton candy caramels cake caramels sesame snaps powder. Bear claw candy topping.' %}
+                              <p id="note_id_{{loop.index}}" data-minutes="{{ vl }}" data-details_id="{{loop.index}}">
+                                {{ vl }}
+                              </p>
+                            </div>
+                            <div class="tab-pane fade" id="navs-pills-top-actn_{{loop.index}}" role="tabpanel">
+                              <div class="list-group">
+                                  <label class="list-group-item">
+                                    <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle" height="25px" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="soyemi olanrewaju">
+                                    <input class="form-check-input me-1" type="checkbox" value="">
+                                    With supporting text below <small style="float: right;" class="badge badge-sm bg-label-primary">pending</small>
+                                  </label>
+                                  <label class="list-group-item">
+                                    <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle" height="25px" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="Raheed Bello">
+                                    <input class="form-check-input me-1" type="checkbox" value="" checked>
+                                    additional content natural lead-in <small style="float: right;" class="badge badge-sm bg-label-success">completed</small>
+                                  </label>
+                                </div>
+                              
+                            </div>
+                            <div class="tab-pane fade" id="navs-pills-top-dvrb_{{loop.index}}" role="tabpanel">
+                              <div class="list-group">
+                                  <label class="list-group-item">
+                                    With supporting text below 
+                                  </label>
+                                  <label class="list-group-item">
+                                    additional content natural lead-in 
+                                  </label>
+                                </div>
+                              
+                            </div>
+                          </div>
+                          <p class="mb-0 p-3 pb-0">
+                                <i class="bx bx-edit" style="cursor: pointer;" onclick="edit_minute_item()"></i> 
+                              </p>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="delete_report('minutes_id')">
+                          <i class="bx bx-trash"></i> Delete
+                        </button>
+                      </div>
+                    </div>
+                    <!-- // end details -->
+
+                    <!-- add comment -->
+                    <div class="collapse" id="cm_{{ loop.index }}">
+                      <div class=" p-3 border">
+                        <form class="">
+                          <div class="form-group">
+                            <label for="ControlTextarea1" class="form-label">Comment</label>
+                            <textarea class="form-control" id="ControlTextarea1" rows="3" required></textarea>
+                          </div>
+                          <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-sm mt-2">Add comment</button>
+                          </div>
+                        </form>
+                        <div class="divider divider-primary">
+                          <div class="divider-text">Other comment</div>
+                        </div>
+                        {% for x in range(4) %}
+                        <div>
+                          <div class="mb-2">
+                            <div class="avatar avatar-online" style="width: 100%; ">
+                              <img src="{{ url_for('static', filename='assets/img/avatars/1.png') }}" alt="" class="w-px-40 h-auto rounded-circle">
+                              <small class="text-muted">13th May, 2023 | 11:47:03am</small>
+                            </div>
+                          </div>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                          </p>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <!-- // end comment -->
+                    </p>
+                  </div>
+                </div>
+                {% endfor %}
+                <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+                  <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                </div>
+                <div class="ps__rail-y" style="top: 0px; height: 232px; right: 0px;">
+                  <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 35px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- // end details -->
+        </div>
+      </div>
+    </div>
+    <!--/ Basic Bootstrap Table -->
+  </div>
+  <!-- / Content -->
+  <div class="content-backdrop fade"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+  const addTask = () =>{
+    alert('Added')
+  }
+
+  const removeTask = () =>{
+    alert('removed')
+  }
+
+  const addDev = () =>{
+    alert('Add deliverables')
+  }
+
+  const removedev = () =>{
+    alert('deliverable removed')
+  }
+
+  const close_comment = (id)=>{
+    comment = document.getElementById(id)
+    if (comment.classList.contains('show')) {
+      comment.classList.remove('show')
+    }
+  }
+  const close_view = (id)=>{
+    view = document.getElementById(id)
+    if (view.classList.contains('show')) {
+      view.classList.remove('show')
+    }
+  }
+
+  const edit_minute_item = () =>{
+    
+    $('#editmeetingnote').modal('show')
+  }
+
+  const delete_report = (id) =>{
+    $('#delete_minutes').modal('show')
+  }
+
+
+</script>
+<script src="{{ url_for('static', filename='assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
+{% endblock %}
+{% block modals %}
+<div class="modal fade" id="addprojectelement" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-xl">
+    <form class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="backDropModalTitle">Kalakuta project</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <div class="row">
+              <div class="col mb-3">
+                <label for="subjectBackdrop" class="form-label">Subject</label>
+                <input type="text" id="subjectBackdrop" name="subject" class="form-control" placeholder="Enter subject">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col mb-0">
+                <label for="descBackdrop" class="form-label">Description</label>
+                <textarea class="form-control" id="descBackdrop" name="desc" rows="2" placeholder="Enter description"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col mb-0">
+                <label for="minBackdrop" class="form-label">Minutes Note</label>
+                <textarea class="form-control" id="minBackdrop" name="minutes" rows="5" placeholder="Enter minutes"></textarea>
+                <div class="divider text-start">
+                  <div class="divider-text">or upload document</div>
+                </div>
+                <input class="form-control" type="file" id="formFile">
+                <small>Allowed files: .pdf, .docx</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <div class="row g-2">
+              <div class="col">
+                <label for="actBackdrop" class="form-label">Actionables</label>
+                <input type="text" id="actBackdrop" name="actionables" class="form-control">
+              </div>
+              <div class="col">
+                <label for="asnBackdrop" class="form-label">Actionables</label>
+                <div class="input-group">
+                  <select class="form-select" id="inputGroupSelect02">
+                    <option selected disabled>--select team member--</option>
+                    <option value="1">Soyemi Olanrewaju</option>
+                  </select>
+                  <label class="input-group-text" for="inputGroupSelect02" onclick="addTask()">Add</label>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-0 pt-0" id="actionables_users">
+              <div class="col-md-12">
+                <div class="demo-inline-spacing mt-3">
+                  <div class="list-group list-group-flush">
+                    <a href="javascript:void(0);" class="list-group-item list-group-item-action">
+                      Bear claw cake biscuit 
+                      <small class="badge bg-label-primary" style="float: right;">
+                        Soyemi Olanrewaju <i class="bx bx-minus p-0" onclick="removeTask()"></i>
+                      </small>
+                    </a>
+                    <a href="javascript:void(0);" class="list-group-item list-group-item-action">
+                      Soufflé pastry pie ice 
+                      <small class="badge bg-label-primary" style="float: right;">
+                        Soyemi Olanrewaju <i class="bx bx-minus p-0" onclick="removeTask()"></i>
+                      </small>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-2">
+              <div class="col mb-0">
+                <label for="dvlBackdrop" class="form-label">Deliverables</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Deliverables item" aria-label="Deliverables item" aria-describedby="button-addon2">
+                  <button class="btn btn-outline-primary" type="button" id="button-addon2" onclick="addDev()">Add item</button>
+                </div>
+              </div>
+            </div>
+            <div class="row" id="deliverables_opt">
+              <div class="col-md-12">
+                <div class="demo-inline-spacing mt-0 pt-0">
+                  <div class="list-group list-group-flush pt-0">
+                    <a href="javascript:void(0);" class="list-group-item list-group-item-action">
+                      Deleiverable item
+                      <i class="bx bx-minus p-0" style="float: right" onclick="removedev()"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+        Close
+        </button>
+        <button type="button" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="editmeetingnote" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+  <div class="modal-dialog">
+    <form class="modal-content" method="patch">
+      <div class="modal-header">
+        <h5 class="modal-title" id="backDropModalTitle">Reporting subject</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col mb-3">
+            <label for="edit_minutes" class="form-label" id="edit_minutes_label">Minutes</label>
+            <textarea class="form-control" id="edit_minutes" name="edit_minutes" required></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+        Close
+        </button>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<div class="modal fade" id="delete_minutes" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Delete Record</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6> Are you sure to delete record?</h6>
+        </div>
+        <div class="modal-footer">
+          <form method="DELETE" action="#">
+            <input type="hidden" name="report_id" id="report_id">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-danger">Yes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

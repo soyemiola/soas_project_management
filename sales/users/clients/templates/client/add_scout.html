@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="content-wrapper">
+<div class="container-xxl flex-grow-1 container-p-y">
+  <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Scouting /</span> new company</h4>
+  <!-- Basic Layout & Basic with Icons -->
+  <div class="row">
+    
+    <div class="col-xxl">
+      <div class="card mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h5 class="mb-0">Register Details</h5>
+          <small class="text-muted float-end"><a href="{{ url_for('client.scout_list') }}"><i class="bx bx-list-ul"></i> Back to list</a></small>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{{ url_for('client.save_client_contact_record') }}">
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cname">Company Name <span>*</span></label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-company" class="input-group-text"><i class="bx bx-user"></i></span>
+                  <input type="text" id="basic-icon-default-cname" class="form-control" placeholder="soas technology" aria-label="soas technology" aria-describedby="basic-icon-default-company" required>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cemail">Email <span>*</span></label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                  <input type="text" id="basic-icon-default-cemail" class="form-control" placeholder="" aria-label="" aria-describedby="basic-icon-default-cemail2" required>
+                  <span id="basic-icon-default-cemail2" class="input-group-text">@example.com</span>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cposition">Industry <span>*</span></label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
+                  <input type="text" id="basic-icon-default-cposition" class="form-control" placeholder="digital agency" aria-label="digital agency" aria-describedby="basic-icon-default-industry" required>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Address <span>*</span></label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-address" class="input-group-text"><i class="bx bx-building"></i></span>
+                  <input type="text" id="basic-icon-default-cphone" class="form-control phone-mask" placeholder="9b street area lagos state" aria-label="658 799 8941" aria-describedby="basic-icon-default-address" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row justify-content-end">
+              <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="content-backdrop fade"></div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+
+{% endblock %}
+
