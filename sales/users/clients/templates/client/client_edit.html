@@ -19,7 +19,19 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-buildings"></i></span>
-                  <input type="text" id="basic-icon-default-company" class="form-control" value="ACME Inc." placeholder="ACME Inc." aria-label="ACME Inc." aria-describedby="basic-icon-default-company2">
+                  <input type="text" id="basic-icon-default-company" class="form-control" value="" placeholder="SOAS Technology" aria-label="SOAS Technology" aria-describedby="basic-icon-default-company2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-country">Country</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-country" class="input-group-text"><i class="bx bxs-flag"></i></span>
+                  <select class="form-select" name="">
+                    <option value="">--select country--</option>
+                    <option value="pending" selected>Nigeria</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -66,7 +78,11 @@
               <div class="col-sm-10">
                 <div class="form-text"><a href="#" class="add_contact">add contact details</a></div>
                 <div class="mt-2" id="crtdContact">
-                  
+                  <div class="btn btn-secondary btn-sm" style="margin-right: 5px" id="rem1" onclick="remove_contact()">
+                    <input type="hidden" name="crdt_contact" value="`name', 'email', 'position', 'number`">
+                      Soyemi Olanrewaju
+                    <span class="bx bx-user-minus"></span>
+                  </div>
                 </div>
               </div>
             </div>

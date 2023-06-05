@@ -2,7 +2,7 @@ from flask import Flask
 from sales.config import Config
 
 
-baseURL = 'http://localhost:5000'
+baseURL = 'http://localhost:5000/api/v1/'
 
 def create_app(config_class=Config):
 	app = Flask(__name__)

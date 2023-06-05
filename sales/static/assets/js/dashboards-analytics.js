@@ -18,12 +18,16 @@
     totalRevenueChartOptions = {
       series: [
         {
+          name: '2022',
+          data: [18, 7, 15, 29, 18, 12, 9, 14, 11, 10, 4, 9]
+        },
+        {
           name: '2021',
-          data: [18, 7, 15, 29, 18, 12, 9]
+          data: [13, 18, 9, 14, 5, 17, 15, 14, 13, 16, 17, 6]
         },
         {
           name: '2020',
-          data: [-13, -18, -9, -14, -5, -17, -15]
+          data: [15, 14, 13, 16, 17, 6, 13, 18, 9, 14, 5, 17]
         }
       ],
       chart: {
@@ -41,7 +45,7 @@
           endingShape: 'rounded'
         }
       },
-      colors: [config.colors.primary, config.colors.info],
+      colors: [config.colors.primary, config.colors.info, config.colors.warning],
       dataLabels: {
         enabled: false
       },
@@ -78,7 +82,7 @@
         }
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
         labels: {
           style: {
             fontSize: '13px',

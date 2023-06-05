@@ -5,6 +5,7 @@
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Client /</span> client list</h4>
     <!-- Basic Bootstrap Table -->
+    
     <div class="card">
       <h5 class="card-header"><a href="{{ url_for('client.client_add') }}" class="btn btn-primary btn-sm"><i class="menu-icon tf-icons bx bx-user-plus"></i> Add client</a></h5>
       <div class="text-nowrap">
@@ -12,6 +13,7 @@
           <thead>
             <tr>
               <th>Company's name</th>
+              <th>Country</th>
               <th>Email</th>
               <th>Contact person</th>
               <th>Industry</th>
@@ -20,26 +22,38 @@
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
-            <tr>
-              <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>SOAS Technology</strong></td>
-              <td><a href="mailto:sample@email.com">sample@email.com</a></td>
-              <td><a href="#">Atanda Samuel</a></td>
-              <td>Digital Agency</td>
-              <td><span class="badge bg-label-primary me-1">Active</span></td>
-              <td>
-                <div class="dropdown">
-                  <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bx bx-dots-vertical-rounded"></i>
-                  </button>
-                  <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="#"><i class="bx bx-cog me-1"></i> Status</a>
-                    <a class="dropdown-item" href="{{ url_for('client.client_edit', id=1) }}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                    <button class="dropdown-item delete" id="delete_1" data-id="1"><i class="bx bx-trash me-1"></i> Delete</button>
+            {% if clients.success == True %}
+              {% for i in clients.data %}
+              <tr>
+                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ i.name }}</strong></td>
+                <td>{{ i.country }}</td>
+                <td><a href="mailto:{{ i.email }}">{{ i.email }}</a></td>
+                <td>
+                  {% if i.contacts | length > 1 %}
+                  {{ i.contacts[0].name }} <small>+ {{ i.contacts | length - 1 }} </small>
+                  {% else %}
+                  {{ i.contacts[0].name }}
+                  {% endif %}
+                </td>
+                <td>{{ i.industry }}</td>
+                <td><span class="badge bg-label-primary me-1">{{ i.status }}</span></td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu" style="">
+                      <button class="dropdown-item" id="c_{{ i.id }}" onclick="view_client('c_{{ i.id }}')" data-id="{{ i.id }}" data-name="{{ i.name }}" data-country="{{ i.country }}" data-address="{{ i.address }}" data-email="{{ i.email }}" data-contacts="{{ i.contacts }}" data-industry="{{ i.industry }}" data-number="{{ i.number }}" data-status="{{ i.status }}">
+                      <i class="bx bx-folder-open me-1"></i> view 
+                    </button>
+                      <a class="dropdown-item" href="{{ url_for('client.client_edit', id=i.id ) }}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                      <button class="dropdown-item delete" id="delete_{{ i.id }}" data-id="{{ i.id }}"><i class="bx bx-trash me-1"></i> delete</button>
+                    </div>
                   </div>
-                </div>
-              </td>
-            </tr>
-            </tr>
+                </td>
+              </tr>
+              {% endfor %}
+            {% endif %}
           </tbody>
         </table>
       </div>
@@ -59,6 +73,67 @@
 
 {% block scripts %}
   <script type="text/javascript">
+    const view_client = (id)=>{
+      name = document.getElementById(id).dataset.name
+      country = document.getElementById(id).dataset.country
+      address = document.getElementById(id).dataset.address
+      email = document.getElementById(id).dataset.email
+      contacts = document.getElementById(id).dataset.contacts
+      industry = document.getElementById(id).dataset.industry 
+      number = document.getElementById(id).dataset.number
+      status = document.getElementById(id).dataset.status
+
+      $('#cname').val(name)
+      $('#caddress').val(address)
+      $('#cemail').val(email)
+      $('#ccontacts').val(contacts)
+      $('#cindustry').val(industry)
+      $('#cnumber').val(number)
+
+      setSelected('ccountry', country)
+      setSelected('cstatus', status)
+
+      $('#contactlist').empty()
+
+      cnt = jsonData(contacts)
+
+      for (var i = 0; i < cnt[0].length; i++) {
+        contactList = `<div class="btn btn-secondary btn-sm" style="margin-right: 5px">
+                        <a href="#" class="text-white">`+ cnt[0][i]['name']+`</a>
+                      </div>`;
+
+        $('#contactlist').append(contactList)
+      }
+
+
+      $('#view_client').modal('show')
+    }
+
+
+    let jsonData = (value)=>{
+      _contacts = value.replace(/'/g, '"');
+      new_contacts = '[' + _contacts + ']' ;
+
+      json = JSON.parse(new_contacts)
+
+      return json
+
+    }
+
+    let setSelected = (option, value)=>{
+      var inputValue = value;
+      var selectElement = document.getElementById(option);
+      
+      for (var i = 0; i < selectElement.options.length; i++) {
+        var option = selectElement.options[i];
+        if (option.value === inputValue) {
+          //console.log(option.value);
+          option.selected = true;
+        }
+      }
+    }
+
+
     $('.delete').click(function () {
       id = $(this).attr('id')
 
@@ -72,6 +147,108 @@
 {% endblock %}
 
   {% block modals %}
+  <div class="modal fade" id="view_client" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Company Information</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="patch" action="{{ url_for('client.update_scout') }}" id="updateform">
+            <input type="hidden" name="id" id="sid">
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cname">Company Name</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-company" class="input-group-text"><i class="bx bx-user"></i></span>
+                  <input type="text" class="form-control" id="cname">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-country">Country</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-country" class="input-group-text"><i class="bx bxs-flag"></i></span>
+                  <select class="form-select" name="" id="ccountry">
+                    <option value="">--select country--</option>
+                    <option value="Nigeria">Nigeria</option>
+                    <option value="South Africa" selected>South Africa</option>
+                    <option value="Ghana" selected>Ghana</option>
+                    <option value="Algeria" selected>Algeria</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Address</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-address" class="input-group-text"><i class="bx bx-building"></i></span>
+                  <input type="text" class="form-control phone-mask" id="caddress">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cemail">Email </label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                  <input type="text" class="form-control" id="cemail">
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cposition">Industry</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
+                  <input type="text" class="form-control" id="cindustry">
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-cposition">Number</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
+                  <input type="text" class="form-control" id="cnumber" name="cnumber">
+                </div>
+              </div>
+            </div>   
+
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Status</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-status" class="input-group-text"><i class="bx bxs-cog"></i></span>
+                  <select class="form-select" name="" id="cstatus">
+                    <option value="pending" selected>pending</option>
+                    <option value="active" selected>active</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="divider divider-primary">
+                <div class="divider-text">Contact List</div>
+              </div>
+              <div id="contactlist"></div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" form="updateform">Update</button> 
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="delete_modal" tabindex="-1" aria-modal="true" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

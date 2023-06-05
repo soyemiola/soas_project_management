@@ -4,7 +4,8 @@
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Scouting /</span> prospect list</h4>
-    <!-- Basic Bootstrap Table -->
+    
+    
     <div class="card">
       <h5 class="card-header"><a href="{{ url_for('client.add_scout') }}" class="btn btn-primary btn-sm"><i class="menu-icon tf-icons bx bx-user-plus"></i> Add company</a></h5>
       <div class="text-nowrap">
@@ -20,26 +21,30 @@
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
-            <tr>
-              <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>SOAS Technology</strong></td>
-              <td> <span data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="37B Fola Sibo Lekki phase 1, Victoria island Lagos state">37B Fola Sibo Lekki phase 1, Vict.....</span></td>
-              <td><a href="mailto:sample@email.com">sample@email.com</a></td>
-              <td>Digital Agency</td>
-              <td><span class="badge bg-label-primary me-1">pending</span></td>
-              <td>
-                <div class="dropdown">
-                  <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bx bx-dots-vertical-rounded"></i>
-                  </button>
-                  <div class="dropdown-menu" style="">
-                    <button class="dropdown-item" id="s_1" onclick="view_scout('s_1')" data-name="SOAS Technology" data-address="37B Fola Sibo Lekki phase 1, Victoria island Lagos state" data-email="sample@email.com" data-industry="Digital Agency" data-comment="">
-                      <i class="bx bx-folder-open me-1"></i> view 
+            {% if det.success == True %}
+              {% for x in det.data %}
+              <tr>
+                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ x.name }}</strong></td>
+                <td> <span data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="{{ x.address }}">{{ x.address | truncate(35) }}</span></td>
+                <td><a href="mailto:{{ x.email }}">{{ x.email }}</a></td>
+                <td>{{ x.industry }}</td>
+                <td><span class="badge bg-label-primary me-1">{{ x.status }}</span></td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bx bx-dots-vertical-rounded"></i>
                     </button>
-                    <button class="dropdown-item delete" id="delete_1" data-id="1"><i class="bx bx-trash me-1"></i> Delete</button>
+                    <div class="dropdown-menu" style="">
+                      <button class="dropdown-item" id="s_{{loop.index}}" onclick="view_scout('s_{{loop.index}}')" data-name="{{ x.name }}" data-address="{{ x.address }}" data-email="{{ x.email }}" data-industry="{{ x.industry }}" data-comment="{{ x.comment }}">
+                        <i class="bx bx-folder-open me-1"></i> view 
+                      </button>
+                      <button class="dropdown-item delete" id="delete_{{loop.index}}" data-id="1"><i class="bx bx-trash me-1"></i> Delete</button>
+                    </div>
                   </div>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
+              {% endfor %}
+            {% endif %}
           </tbody>
         </table>
       </div>
@@ -109,7 +114,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel1">Add contact person</h5>
+          <h5 class="modal-title" id="exampleModalLabel1">Company Information</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -139,6 +144,18 @@
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
                   <input type="text" class="form-control" id="sindustry">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-country">Country</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-country" class="input-group-text"><i class="bx bxs-flag"></i></span>
+                  <select class="form-select" name="">
+                    <option value="">--select country--</option>
+                    <option value="pending" selected>Nigeria</option>
+                  </select>
                 </div>
               </div>
             </div>

@@ -4,7 +4,7 @@
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Client / Contact /</span> list</h4>
-    <!-- Basic Bootstrap Table -->
+    
     <div class="card">
       <h5 class="card-header"><a href="{{ url_for('client.client_contact_add') }}" class="btn btn-primary btn-sm"><i class="menu-icon tf-icons bx bx-user-plus"></i> Add record </a></h5>
       <div class="text-nowrap">
@@ -20,25 +20,28 @@
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
+            {% if det %}
+            {% for a in det.data %}
             <tr>
-              <td>Olanrewaju Soyemi</td>
-              <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>SOAS Technology</strong></td>
-              <td><a href="mailto:sample@email.com">sample@email.com</a></td>
-              <td><a href="tel:08123456789">08123456789</a></td>
-              <td><span class="badge bg-label-primary me-1">Active</span></td>
+              <td>{{ a.name }}</td>
+              <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ a.company }}</strong></td>
+              <td><a href="mailto:{{ a.email }}">{{ a.email }}</a></td>
+              <td><a href="tel:{{ a.number }}">{{ a.number }}</a></td>
+              <td><span class="badge bg-label-primary me-1">{{ a.status }}</span></td>
               <td>
                 <div class="dropdown">
                   <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bx bx-dots-vertical-rounded"></i>
                   </button>
                   <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="{{ url_for('client.client_contact_edit', id=1) }}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                    <button class="dropdown-item delete" id="delete_1" data-id="1"><i class="bx bx-trash me-1"></i> Delete</button>
+                    <a class="dropdown-item" href="{{ url_for('client.client_contact_edit', id=a.id) }}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                    <button class="dropdown-item delete" id="delete_{{loop.index}}" data-id="{{ a.id }}"><i class="bx bx-trash me-1"></i> Delete</button>
                   </div>
                 </div>
               </td>
             </tr>
-            </tr>
+            {% endfor %}
+            {% endif %}
           </tbody>
         </table>
       </div>
