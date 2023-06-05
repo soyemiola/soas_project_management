@@ -34,3 +34,13 @@ def delete_project():
 @project.get('/soassales/v1/project/<int:id>/project-progress-details')
 def project_details(id):
 	return render_template('project/project_details.html', menu=menu, submenu='pr')
+
+
+@project.get('/soassales/v1/project/user/actionable')
+def project_actionable():
+	return render_template('project/project_actionable.html', menu=menu, submenu='ac')
+
+
+@project.get('/soassales/v1/project/user/project/<int:id>/actionable/details')
+def project_actionable_info(id):
+	return render_template('project/project_actionable_info.html', menu=menu, submenu='ac')

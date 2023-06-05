@@ -81,8 +81,10 @@
           <!-- Details -->
           <div class="col-md-9" id="details">
             <div class="card overflow-hidden mb-4" style="height: 700px;">
-              <h5 class="card-header">
-                Project progress <br>
+              <div class="card-header">
+              <h5 class="">
+                Project progress <a href="{{ url_for('project.project_list') }}" class="btn btn-primary btn-sm" style="float: right;"><i class="bx bx-arrow-back"></i> Back</a>
+              </h5>
                 <div class="progress mt-3 mb-3">
                   <div class="progress-bar bg-primary progress-bar-striped shadow-none" role="progressbar" style="width: 25%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">Initiated</div>
                   <div class="progress-bar bg-info progress-bar-striped shadow-none" role="progressbar" style="width: 25%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">In-progress</div>
@@ -90,7 +92,29 @@
                   <div class="progress-bar bg-success progress-bar-striped shadow-none" role="progressbar" style="width: 25%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Completed</div>
                 </div>
                 <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#addprojectelement"><i class="bx bx-plus"></i> Add item</button>
-              </h5>
+                <button type="button" class="btn btn-primary btn-sm mt-2" onclick="prj_status()"><i class="bx bx-check-square"></i> Update status</button>
+                
+                <div class="prj_status mt-2" id="prj_status" style="display: none">
+                  <div class="divider divider-primary">
+                    <div class="divider-text">Project Status</div>
+                  </div>
+                  <form class="form-inline" id="p_status" method="post">
+                    <div class="row">
+                      <div class="col-xs-12 col-md-4">
+                        <div class="form-group mb-2">
+                          <label>Select status:</label>
+                          <select class="form-select form-control-sm" name="status">
+                            <option value="">In-progress</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <input type="submit" name="submit" class="btn btn-primary btn-sm" value="Update">
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
 
               <div class="card-body ps ps--active-y" id="vertical-example">
                 <div class="divider divider-primary">
@@ -155,13 +179,27 @@
                               <div class="list-group">
                                   <label class="list-group-item">
                                     <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle" height="25px" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="soyemi olanrewaju">
-                                    <input class="form-check-input me-1" type="checkbox" value="">
-                                    With supporting text below <small style="float: right;" class="badge badge-sm bg-label-primary">pending</small>
+                                    
+                                    <input class="form-check-input me-1" type="checkbox" checked disabled>
+                                    With supporting text below 
+
+                                    <span style="float: right;">
+                                      <small  class="badge badge-sm bg-label-primary">pending</small>
+                                      <i class="bx bx-edit" style="cursor:pointer;" onclick="opentask('id')"></i>                                     
+                                    </span>
+
                                   </label>
                                   <label class="list-group-item">
                                     <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle" height="25px" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="Raheed Bello">
-                                    <input class="form-check-input me-1" type="checkbox" value="" checked>
-                                    additional content natural lead-in <small style="float: right;" class="badge badge-sm bg-label-success">completed</small>
+
+                                    <input class="form-check-input me-1" type="checkbox" disabled>
+                                    additional content natural lead-in 
+
+
+                                    <span style="float: right;">
+                                      <small  class="badge badge-sm bg-label-success">pending</small>
+                                      <i class="bx bx-edit" style="cursor:pointer;"></i>                                     
+                                    </span>
                                   </label>
                                 </div>
                               
@@ -279,13 +317,36 @@
     }
   }
 
-  const edit_minute_item = () =>{
-    
+  const edit_minute_item = () =>{    
     $('#editmeetingnote').modal('show')
   }
 
   const delete_report = (id) =>{
     $('#delete_minutes').modal('show')
+  }
+
+  const prj_status = ()=>{
+    elem = document.getElementById('prj_status')
+    if (elem.style.display == 'block') {
+      elem.style.display = 'none'
+    }else{
+      elem.style.display = 'block'
+    }
+    
+  }
+
+  const opentask = ()=>{
+    $('#taskview').modal('show')
+  }
+
+  const addfeedback = ()=>{
+    elem = document.getElementById('addfeedbackbx')
+
+    if (elem.style.display == 'none') {
+      elem.style.display = 'block';
+    }else{
+      elem.style.display = 'none'
+    }
   }
 
 
@@ -440,6 +501,88 @@
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
           <button type="submit" class="btn btn-danger">Yes</button>
           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="taskview" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="backDropModalTitle">Kalakuta project</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-2">
+            <div class="col-md">
+              <div class="divider text-end m-0 p-0">
+                <div class="divider-text">Assigned to: <span id="assignto">Soyemi Olanrewaju</span></div>
+              </div>
+              <small class="text-muted">TASK DETAILS</small>
+
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+              tempor incididunt ut labore et dolore magna aliqua.</p>
+              <button class="btn btn-outline-primary btn-sm" onclick="addfeedback()"><i class="bx bx-plus"></i> add feedback</button>
+
+              <div id="addfeedbackbx" style="display: none">
+                <div class="divider divider-light">
+                  <div class="divider-text">Add feedback</div>
+                </div>
+                <form method="post">
+                  <div class="form-group">
+                    <label>Feedback</label>
+                    <textarea class="form-control"></textarea>
+                  </div>
+                  <div class="form-group mt-1">
+                    <button class="btn btn-primary btn-sm">Submit</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addfeedback()">Close</button>
+                  </div>
+                </form>
+              </div>
+
+
+              <div class="divider divider-primary">
+                <div class="divider-text">feedback history</div>
+              </div>
+
+
+              <ul class="p-0 m-0">
+                {% for x in range(3) %}
+                <li class="d-flex mb-4 pb-1">
+                  <div class="avatar flex-shrink-0 me-3">
+                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
+                  </div>
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 p-2 border border-light">
+                    <div class="me-2">
+                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+                        <small class="mt-1" style="float: right; font-weight: bold;"> 03/06/2023 10:54:23</small>
+                      </small>
+                    </div>
+                  </div>
+                </li>
+                {% endfor %}
+                <li class="d-flex mb-4 pb-1">
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between p-2 border border-light">
+                    <div class="me-2">
+                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</small>
+                    </div>
+                  </div>
+                  <div class="avatar flex-shrink-0 me-3 ml-5" style="margin-left: 20px;">
+                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
+                  </div>
+                </li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+          </button>
         </div>
       </div>
     </div>

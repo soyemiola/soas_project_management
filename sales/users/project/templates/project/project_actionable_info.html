@@ -1,0 +1,128 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="content-wrapper">
+  <!-- Content -->
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project / Actionable / Task /</span> details</h4>
+    
+    <div class="card">
+      <div class="card-header">Kalakuta project</div>
+      <div class="card-body">        
+        <div class="row g-2">
+            <div class="col-md-8 offset-md-1">
+              <small class="text-muted">TASK DETAILS</small>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+              tempor incididunt ut labore et dolore magna aliqua.</p>
+              <button class="btn btn-outline-primary btn-sm" onclick="addfeedback()"><i class="bx bx-plus"></i> add feedback</button>
+              <button class="btn btn-outline-primary btn-sm" onclick="feedbackstatus()"><i class="bx bx-check-square"></i> update status</button>
+
+              <div id="addfeedbackbx" style="display: none">
+                <div class="divider divider-light">
+                  <div class="divider-text">Add feedback</div>
+                </div>
+                <form method="post">
+                  <div class="form-group">
+                    <label>Feedback</label>
+                    <textarea class="form-control"></textarea>
+                  </div>
+                  <div class="form-group mt-1">
+                    <button class="btn btn-primary btn-sm">Submit</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addfeedback()">Close</button>
+                  </div>
+                </form>
+              </div>
+
+              <div id="feedbackstatus" style="display: none">
+                <div class="divider divider-light">
+                  <div class="divider-text">Actionable Status</div>
+                </div>
+                <form method="post">
+                  <div class="form-group">
+                    <label>Feedback</label>
+                    <select class="form-select" name="status">
+                      <option>pending</option>
+                    </select>
+                  </div>
+                  <div class="form-group mt-1">
+                    <button class="btn btn-primary btn-sm">Update</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="feedbackstatus()">Close</button>
+                  </div>
+                </form>
+              </div>
+
+
+              <div class="divider divider-primary">
+                <div class="divider-text">feedback history</div>
+              </div>
+
+
+              <ul class="p-0 m-0">
+                {% for x in range(3) %}
+                <li class="d-flex mb-4 pb-1">
+                  <div class="avatar flex-shrink-0 me-3">
+                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
+                  </div>
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 p-2 border border-light">
+                    <div class="me-2">
+                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+                        <small class="mt-1" style="float: right; font-weight: bold;"> 03/06/2023 10:54:23</small>
+                      </small>
+                    </div>
+                  </div>
+                </li>
+                {% endfor %}
+                <li class="d-flex mb-4 pb-1">
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between p-2 border border-light">
+                    <div class="me-2">
+                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</small>
+                    </div>
+                  </div>
+                  <div class="avatar flex-shrink-0 me-3 ml-5" style="margin-left: 20px;">
+                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
+                  </div>
+                </li>
+              </ul>
+
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <!-- / Content -->
+
+  <div class="content-backdrop fade"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  
+  const addfeedback = ()=>{
+    elem = document.getElementById('addfeedbackbx')
+    st = document.getElementById('feedbackstatus')
+
+    st.style.display = 'none'
+
+    if (elem.style.display == 'none') {
+      elem.style.display = 'block';
+    }else{
+      elem.style.display = 'none'
+    }
+  }
+
+  const feedbackstatus = ()=>{
+    elem = document.getElementById('feedbackstatus')
+    fd = document.getElementById('addfeedbackbx')
+
+    fd.style.display = 'none'
+
+    if (elem.style.display == 'none') {
+      elem.style.display = 'block';
+    }else{
+      elem.style.display = 'none'
+    }
+  }
+</script>
+{% endblock %}
