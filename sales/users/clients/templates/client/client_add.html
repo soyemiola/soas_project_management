@@ -5,7 +5,7 @@
   <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Client /</span> new client</h4>
   <!-- Basic Layout & Basic with Icons -->
   <div class="row">
-    
+    {{ user_country }}
     <div class="col-xxl">
       <div class="card mb-4">
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -13,13 +13,14 @@
           <small class="text-muted float-end"><a href="{{ url_for('client.client_list') }}"><i class="bx bx-list-ul"></i> Back to list</a></small>
         </div>
         <div class="card-body">
-          <form method="post" action="{{ url_for('client.save_client_record') }}">
+          <form method="post" action="{{ url_for('client.save_client_record') }}" enctype="application/json">
+            <input type="hidden" name="createdby" value="1234567876oiuytrtyu">
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="basic-icon-default-company">Company Name</label>
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-buildings"></i></span>
-                  <input type="text" id="basic-icon-default-company" class="form-control" value="" placeholder="SOAS Technology" aria-label="SOAS Technology" aria-describedby="basic-icon-default-company2">
+                  <input type="text" id="basic-icon-default-company" name="clientname" class="form-control" value="" placeholder="SOAS Technology" aria-label="SOAS Technology" aria-describedby="basic-icon-default-company2">
                 </div>
               </div>
             </div>
@@ -28,10 +29,24 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-country" class="input-group-text"><i class="bx bxs-flag"></i></span>
-                  <select class="form-select" name="">
+                  <select class="form-select" name="country">
                     <option value="">--select country--</option>
-                    <option value="pending" selected>Nigeria</option>
+                    {% if countrylist %}
+                      {% for x in countrylist %}
+                      <option value="{{ x }}" >{{ x }}</option>
+                      {% endfor %}
+                    {% endif %}
+                    
                   </select>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-state">State</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-state" class="input-group-text"><i class="bx bxs-flag"></i></span>
+                  <input type="text" id="basic-icon-default-state" name="state" class="form-control" placeholder="state" aria-label="state" aria-describedby="bbasic-icon-default-state">
                 </div>
               </div>
             </div>
@@ -40,7 +55,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-address2" class="input-group-text"><i class="bx bx-copy"></i></span>
-                  <input type="text" id="basic-icon-default-address" class="form-control" placeholder="Address" aria-label="Address" aria-describedby="bbasic-icon-default-address2">
+                  <input type="text" id="basic-icon-default-address" name="address" class="form-control" placeholder="Address" aria-label="Address" aria-describedby="bbasic-icon-default-address2">
                 </div>
               </div>
             </div>
@@ -49,7 +64,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                  <input type="text" id="basic-icon-default-email" class="form-control" placeholder="soyemi.olanrewaju" aria-label="soyemi.olanrewaju" aria-describedby="basic-icon-default-email2">
+                  <input type="email" id="basic-icon-default-email" name="email" class="form-control" placeholder="soyemi.olanrewaju" aria-label="soyemi.olanrewaju" aria-describedby="basic-icon-default-email2">
                   <span id="basic-icon-default-email2" class="input-group-text">@example.com</span>
                 </div>
                 <div class="form-text">You can use letters, numbers &amp; periods</div>
@@ -60,7 +75,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-phone2" class="input-group-text"><i class="bx bx-phone"></i></span>
-                  <input type="text" id="basic-icon-default-phone" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-phone2">
+                  <input type="text" id="basic-icon-default-phone" name="number" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-phone2">
                 </div>
               </div>
             </div>
@@ -69,7 +84,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-industry2" class="input-group-text"><i class="bx bx-copy"></i></span>
-                  <input type="text" id="basic-icon-default-industry" class="form-control" placeholder="Industry" aria-label="Industry" aria-describedby="bbasic-icon-default-industry2">
+                  <input type="text" id="basic-icon-default-industry" name="industry" class="form-control" placeholder="Industry" aria-label="Industry" aria-describedby="bbasic-icon-default-industry2">
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash, Response
 import requests
 from sales import baseURL
+from sales import countries, get_country_from_ip
 
 
 client = Blueprint('client', __name__, url_prefix='/', template_folder='templates')
@@ -8,15 +9,21 @@ client = Blueprint('client', __name__, url_prefix='/', template_folder='template
 menu = 'company'
 
 
+
 @client.get('/soassales/client-list')
 def client_list():
-	url = baseURL+''.join('clients')
-	print(url)
-	clientlist = requests.get(url)
+	try:
+		url = baseURL+''.join('clients')
 	
-	if clientlist.status_code == 200:
-		det = clientlist.json()
-	else:
+		clientlist = requests.get(url)
+		
+		if clientlist.status_code == 200:
+			det = clientlist.json()
+		else:
+			det = None
+
+	except Exception as e:
+		flash('Error connecting to API host', 'danger')
 		det = None
 
 	return render_template('client/client_list.html', clients=det, menu=menu, submenu="cl")
@@ -24,12 +31,50 @@ def client_list():
 
 @client.get('/soassales/client-add')
 def client_add():
-	return render_template('client/client_add.html', menu=menu, submenu="nc")
+	client_ip = request.remote_addr
+	
+	#client_ip = '192.168.100.7'
+	user_country = get_country_from_ip(client_ip)
+
+	countrylist = countries()
+	return render_template('client/client_add.html', user_country=user_country, countrylist=countrylist, menu=menu, submenu="nc")
 
 
 @client.post('/soassales/client/client-save')
 def save_client_record():
-	return redirect(url_for('client.client_list'))
+	if request.method == 'POST':
+
+		try:
+			data = {
+				'clientname': request.form['clientname'],
+				'country': request.form['country'],
+				'state': request.form['state'],
+				'address': request.form['address'],
+				'email': request.form['email'],
+				'number': request.form['number'],
+				'industry': request.form['industry']
+			}
+
+			print(request.form['country'])
+
+			url = baseURL+''.join('clients/add-client')
+			print(url)
+
+			response = requests.post(url, json=data)
+			print(response)
+			
+			if response.status_code == 200:
+				flash('New created successfully', 'success')
+				return redirect(url_for('client.client_list'))
+			else:
+				flash('Error creating record. Try Again!', 'danger')
+				return redirect(url_for('client.client_add'))
+
+		except Exception as e:
+			flash('Error saving details', 'danger')
+			return redirect(url_for('client.client_add'))
+
+	
 
 
 @client.get('/soassales/client/<int:id>/client-edit')

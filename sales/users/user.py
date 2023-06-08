@@ -5,7 +5,7 @@ user = Blueprint('user', __name__, url_prefix='/', template_folder='templates')
 
 menu = 'dashboard'
 
-
+@user.get('/')
 @user.get('/soassales/v1/auth-login')
 def auth_login():
 	return render_template('users/auth-login.html')
@@ -27,4 +27,4 @@ def profile():
 
 @user.get('/soassales/v1/users/profile/details/notification')
 def profile_notification():
-	return render_template('users/profile_notification.html', menu='profile')
+	return render_template('users/profile_notification.html', menu='profile') 
