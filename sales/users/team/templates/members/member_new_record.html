@@ -3,9 +3,8 @@
 <div class="content-wrapper">
 <div class="container-xxl flex-grow-1 container-p-y">
   <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Member/</span> new member</h4>
-  <!-- Basic Layout & Basic with Icons -->
-  <div class="row">
-    
+  
+  <div class="row">    
     <div class="col-xxl">
       <div class="card mb-4">
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -19,7 +18,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-fullname2" class="input-group-text"><i class="bx bx-user"></i></span>
-                  <input type="text" class="form-control" id="basic-icon-default-fullname" placeholder="Olanrewaju Soyemi" aria-label="Soyemi Olanrewaju" aria-describedby="basic-icon-default-fullname2">
+                  <input type="text" name="fullname" class="form-control" id="basic-icon-default-fullname" placeholder="Olanrewaju Soyemi" aria-label="Soyemi Olanrewaju" aria-describedby="basic-icon-default-fullname2" required>
                 </div>
               </div>
             </div>
@@ -28,7 +27,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-buildings"></i></span>
-                  <input type="text" id="basic-icon-default-company" class="form-control" value="ACME Inc." placeholder="ACME Inc." aria-label="ACME Inc." aria-describedby="basic-icon-default-company2">
+                  <input type="text" id="basic-icon-default-company" name="organization" class="form-control" placeholder="SOAS Technology" aria-label="SOAS Technology" aria-describedby="basic-icon-default-company2" required>
                 </div>
               </div>
             </div>
@@ -37,7 +36,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-copy"></i></span>
-                  <input type="text" id="basic-icon-default-department" class="form-control" placeholder="Sales" aria-label="Sales" aria-describedby="bbasic-icon-default-department">
+                  <input type="text" id="basic-icon-default-department" name="department" class="form-control" placeholder="Sales" aria-label="Sales" aria-describedby="bbasic-icon-default-department" required>
                 </div>
               </div>
             </div>
@@ -46,7 +45,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                  <input type="text" id="basic-icon-default-email" class="form-control" placeholder="soyemi.olanrewaju" aria-label="soyemi.olanrewaju" aria-describedby="basic-icon-default-email2">
+                  <input type="email" id="basic-icon-default-email" name="email" class="form-control" placeholder="soyemi.olanrewaju" aria-label="soyemi.olanrewaju" aria-describedby="basic-icon-default-email2" required>
                   <span id="basic-icon-default-email2" class="input-group-text">@example.com</span>
                 </div>
                 <div class="form-text">You can use letters, numbers &amp; periods</div>
@@ -57,7 +56,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-phone2" class="input-group-text"><i class="bx bx-phone"></i></span>
-                  <input type="text" id="basic-icon-default-phone" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-phone2">
+                  <input type="text" id="basic-icon-default-phone" name="number" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-phone2" required>
                 </div>
               </div>
             </div>
@@ -66,13 +65,13 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bxs-user-detail"></i></span>
-                  <!-- <input type="text" id="basic-icon-default-role" class="form-control" placeholder="Sales" aria-label="Sales" aria-describedby="bbasic-icon-default-department"> -->
-                  <select class="form-control">
-                    <option value="0">--select role--</option>
-                    <option value="">Team lead</option>
-                    <option value="">Supervisor</option>
-                    <option value="">Observer</option>
-                    <option value="">Team member</option>
+                  <select class="form-control" name="role" required>
+                    <option value="0" selected disabled>--select role--</option>
+                    {% if roles %}
+                      {% for x in roles.data %}
+                      <option value="{{ x.id }}">{{ x.name }}</option>
+                      {% endfor %}
+                    {% endif %}
                   </select>
                 </div>
               </div>

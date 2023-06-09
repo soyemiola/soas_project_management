@@ -1,19 +1,12 @@
 from flask import Flask
 from sales.config import Config
 import os
-import geocoder
+#import geocoder
 
 
 
 baseURL = 'http://localhost:5000/api/v1/'
 
-
-def get_country_from_ip(ip_address):
-	g = geocoder.ip(ip_address)
-
-	ip_country = g.country
-
-	return ip_country
 
 
 def countries():
@@ -21,12 +14,8 @@ def countries():
 	
 	try:
 		with open(file_path, 'r') as file:
-			lines = file.readlines()
+			country = file.read()
 			file.close()
-			
-			val = ','.join(lines)
-			country = val.split(',')
-			print(country)
 			return country
 	except FileNotFoundError:
 		return None

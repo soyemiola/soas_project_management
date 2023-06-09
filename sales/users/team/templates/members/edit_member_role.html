@@ -3,7 +3,6 @@
 <div class="content-wrapper">
 <div class="container-xxl flex-grow-1 container-p-y">
   <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Member/</span> new member</h4>
-  <!-- Basic Layout & Basic with Icons -->
   <div class="row">
     
     <div class="col-xxl">
@@ -13,19 +12,20 @@
           <small class="text-muted float-end"><a href="{{ url_for('member.member_role_list') }}"><i class="bx bx-list-ul"></i> Back to list</a></small>
         </div>
         <div class="card-body">
-          <form method="post" action="{{ url_for('member.member_new_record_save') }}">
+          <form method="post" action="{{ url_for('member.member_role_update') }}">
+            <input type="hidden" name="id" value="{{ det.data.id }}">
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="basic-icon-default-role">Name</label>
               <div class="col-sm-6">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-role2" class="input-group-text"><i class="bx bx-user-plus"></i></span>
-                  <input type="text" class="form-control" id="basic-icon-default-role" placeholder="Role name" aria-label="role name" aria-describedby="basic-icon-default-role2">
+                  <input type="text" class="form-control" id="basic-icon-default-role" name="role" value="{{ det.data.name }}" aria-label="role name" aria-describedby="basic-icon-default-role2">
                 </div>
               </div>
             </div>
             <div class="row justify-content-end">
               <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">Update</button>
               </div>
             </div>
           </form>

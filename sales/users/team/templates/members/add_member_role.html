@@ -13,13 +13,13 @@
           <small class="text-muted float-end"><a href="{{ url_for('member.member_role_list') }}"><i class="bx bx-list-ul"></i> Back to list</a></small>
         </div>
         <div class="card-body">
-          <form method="post" action="{{ url_for('member.member_new_record_save') }}">
+          <form method="post" action="{{ url_for('member.save_member_role') }}">
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="basic-icon-default-role">Name</label>
               <div class="col-sm-6">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-role2" class="input-group-text"><i class="bx bx-user-plus"></i></span>
-                  <input type="text" class="form-control" id="basic-icon-default-role" placeholder="Role name" aria-label="role name" aria-describedby="basic-icon-default-role2">
+                  <input type="text" name="role" class="form-control" id="basic-icon-default-role" placeholder="Role name" aria-label="role name" aria-describedby="basic-icon-default-role2">
                 </div>
               </div>
             </div>

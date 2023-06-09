@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, Response
 import requests
 from sales import baseURL
-from sales import countries, get_country_from_ip
+from sales import countries
 
 
 client = Blueprint('client', __name__, url_prefix='/', template_folder='templates')
@@ -30,20 +30,17 @@ def client_list():
 
 
 @client.get('/soassales/client-add')
-def client_add():
-	client_ip = request.remote_addr
-	
-	#client_ip = '192.168.100.7'
-	user_country = get_country_from_ip(client_ip)
+def client_add():	
+	cl = countries()
+	countrylist = cl.split(',')
 
-	countrylist = countries()
-	return render_template('client/client_add.html', user_country=user_country, countrylist=countrylist, menu=menu, submenu="nc")
+	return render_template('client/client_add.html', user_country=countrylist, countrylist=countrylist, menu=menu, submenu="nc")
 
 
 @client.post('/soassales/client/client-save')
 def save_client_record():
 	if request.method == 'POST':
-
+		createdby = 1 # current_user_id
 		try:
 			data = {
 				'clientname': request.form['clientname'],
@@ -52,19 +49,16 @@ def save_client_record():
 				'address': request.form['address'],
 				'email': request.form['email'],
 				'number': request.form['number'],
-				'industry': request.form['industry']
+				'industry': request.form['industry'],
+				'createdby': createdby
 			}
 
-			print(request.form['country'])
-
 			url = baseURL+''.join('clients/add-client')
-			print(url)
 
 			response = requests.post(url, json=data)
-			print(response)
 			
 			if response.status_code == 200:
-				flash('New created successfully', 'success')
+				flash('New created successfully', 'primary')
 				return redirect(url_for('client.client_list'))
 			else:
 				flash('Error creating record. Try Again!', 'danger')
@@ -94,13 +88,7 @@ def client_delete():
 
 @client.get('/soassales/client-contact-list')
 def client_contact_list():
-	url = baseURL+''.join('clients/contact-list')
-	clientlist = requests.get(url)
-	
-	if clientlist.status_code == 200:
-		det = clientlist.json()
-	else:
-		det = None
+	det = None
 	return render_template('client/client_contact_list.html', det=det, menu=menu, submenu="ctl")
 
 
