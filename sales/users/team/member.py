@@ -12,14 +12,15 @@ menu = 'team'
 def member_list():
 	try:
 		url = baseURL+''.join('users') 
-		scoutlist = requests.get(url)
+		userlist = requests.get(url)
 		
-		if scoutlist.status_code == 200:
-			det = scoutlist.json()
+		if userlist.status_code == 200:
+			det = userlist.json()
 		else:
 			det = None
 	except Exception as e:
-		flash(e, 'danger')
+		det = None
+		flash('Error in connection', 'danger')
 
 	return render_template('members/member-list.html', users=det, menu=menu, submenu="ml")
 
@@ -27,14 +28,16 @@ def member_list():
 @member.get('/soassales/member-list/new-record')
 def member_new_record():
 	try:
-		url = baseURL+''.join('users/roles')
+		url = baseURL+''.join('roles')
 		roles = requests.get(url)
+
 		if roles.status_code == 200:
 			det = roles.json()
 		else:
 			det = None
 		
 	except Exception as e:
+		det = None
 		flash('Error fetching record', "danger")
   
 	return render_template('members/member_new_record.html', roles=det, menu=menu, submenu="ml")
@@ -55,7 +58,7 @@ def member_new_record_save():
 				"createdby": current_userid
 			}
 
-			url = baseURL+''.join('users/new-record')
+			url = baseURL+''.join('users/new')
 			new_record = requests.post(url, json=data)
 			det = new_record.json()
 
@@ -75,10 +78,10 @@ def member_new_record_save():
 
 @member.get('/soassales/member/<int:id>/member-edit')
 def member_edit(id):
-	url = baseURL+''.join(f'users/single/{ id }')
+	url = baseURL+''.join(f'users/one/{ id }')
 	res = requests.get(url)
 
-	role_url = baseURL+''.join('users/roles')
+	role_url = baseURL+''.join('roles')
 	roles = requests.get(role_url)
 
 	det = res.json()
@@ -154,7 +157,7 @@ def member_delete():
 @member.get('/soassales/member/member-role-list')
 def member_role_list():
 	try:
-		url = baseURL+''.join('users/roles')
+		url = baseURL+''.join('roles')
 		roles = requests.get(url)
 
 		if roles.status_code == 200:
@@ -182,7 +185,7 @@ def save_member_role():
 				"createdby": user_id
 			}
 
-			url = baseURL+''.join('users/roles/new')
+			url = baseURL+''.join('roles/new')
 			res = requests.post(url, json=data)
 
 			if res.status_code == 200:
@@ -202,7 +205,7 @@ def save_member_role():
 
 @member.get('/soassales/member/<int:id>/member-role-update')
 def edit_member_role(id):
-	url = baseURL+''.join(f"users/roles/edit/{id}")
+	url = baseURL+''.join(f"roles/one/{id}")
 	
 	res = requests.get(url)
 
@@ -223,11 +226,10 @@ def member_role_update():
 			role = request.form['role']
 
 			data = {
-				"role_id": role_id,
 				"role": role
 			}
 
-			url = baseURL+''.join("users/roles/update")
+			url = baseURL+''.join(f'roles/update/{role_id}')
 			res = requests.patch(url, json=data)
 
 			if res.status_code == 200:
@@ -249,7 +251,7 @@ def member_role_delete():
 	if request.method == 'POST':
 		role_id = request.form['role_id']
 
-		url = baseURL+''.join(f'users/roles/{ role_id }')
+		url = baseURL+''.join(f'roles/delete/{ role_id }')
 		res = requests.delete(url)
 		det = res.json()
 

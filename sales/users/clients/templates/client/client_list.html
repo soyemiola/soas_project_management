@@ -4,8 +4,7 @@
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Client /</span> client list</h4>
-    <!-- Basic Bootstrap Table -->
-    {{ clients }}
+    
     <div class="card">
       <h5 class="card-header"><a href="{{ url_for('client.client_add') }}" class="btn btn-primary btn-sm"><i class="menu-icon tf-icons bx bx-user-plus"></i> Add client</a></h5>
       <div class="text-nowrap">
@@ -22,32 +21,45 @@
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
-            {% if clients %}
+            {% if clients.data | length > 0 %}
               {% for i in clients.data %}
               <tr>
                 <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ i.name }}</strong></td>
-                <td>{{ i.country }}</td>
+                <td>
+                  {{ i.country }}
+                </td>
                 <td><a href="mailto:{{ i.email }}">{{ i.email }}</a></td>
                 <td>
-                  {% if i.contacts | length > 1 %}
-                  {{ i.contacts[0].name }} <small>+ {{ i.contacts | length - 1 }} </small>
-                  {% else %}
-                  {{ i.contacts.name }}
+                  {% set contactList = i.id | get_contact %}
+                  {% if contactList.data | length > 0 %}
+                    {% if contactList.data | length > 1 %}
+                      {{ contactList.data[0].name }} <small>+contactList.data | length </small>     
+                    {% else %}          
+                      {{ contactList.data[0].name }}
+                    {% endif %}
                   {% endif %}
                 </td>
                 <td>{{ i.industry }}</td>
-                <td><span class="badge bg-label-primary me-1">{{ i.status }}</span></td>
+                <td>
+                  {% if i.status == 'active' %}
+                    {% set cl = 'primary' %}
+                  {% elif i.status == 'inactive' %}
+                    {% set cl = 'danger' %}
+                  {% endif%}
+                  <span class="badge bg-label-{{cl}} me-1">{{ i.status }}</span>
+                  
+                </td>
                 <td>
                   <div class="dropdown">
                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bx bx-dots-vertical-rounded"></i>
                     </button>
                     <div class="dropdown-menu" style="">
-                      <button class="dropdown-item" id="c_{{ i.id }}" onclick="view_client('c_{{ i.id }}')" data-id="{{ i.id }}" data-name="{{ i.name }}" data-country="{{ i.country }}" data-address="{{ i.address }}" data-email="{{ i.email }}" data-contacts="{{ i.contacts }}" data-industry="{{ i.industry }}" data-number="{{ i.number }}" data-status="{{ i.status }}">
+                      <button class="dropdown-item" id="c_{{loop.index}}" onclick="view_client('c_{{loop.index}}')" data-id="{{i.id}}" data-name="{{i.name}}" data-country="{{i.country}}" data-state="{{ i.state }}" data-address="{{i.address}}" data-email="{{i.email}}" data-contacts="{{ contactList.data }}" data-industry="{{ i.industry }}" data-number="{{ i.number }}" data-status="{{ i.status }}">
                       <i class="bx bx-folder-open me-1"></i> view 
                     </button>
                       <a class="dropdown-item" href="{{ url_for('client.client_edit', id=i.id ) }}"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                      <button class="dropdown-item delete" id="delete_{{ i.id }}" data-id="{{ i.id }}"><i class="bx bx-trash me-1"></i> delete</button>
+                      <button class="dropdown-item delete" id="delete_{{loop.index}}" data-id="{{ i.id }}"><i class="bx bx-trash me-1"></i> delete</button>
                     </div>
                   </div>
                 </td>
@@ -76,6 +88,7 @@
     const view_client = (id)=>{
       name = document.getElementById(id).dataset.name
       country = document.getElementById(id).dataset.country
+      state = document.getElementById(id).dataset.state
       address = document.getElementById(id).dataset.address
       email = document.getElementById(id).dataset.email
       contacts = document.getElementById(id).dataset.contacts
@@ -84,6 +97,7 @@
       status = document.getElementById(id).dataset.status
 
       $('#cname').val(name)
+      $('#cstate').val(state)
       $('#caddress').val(address)
       $('#cemail').val(email)
       $('#ccontacts').val(contacts)
@@ -127,7 +141,6 @@
       for (var i = 0; i < selectElement.options.length; i++) {
         var option = selectElement.options[i];
         if (option.value === inputValue) {
-          //console.log(option.value);
           option.selected = true;
         }
       }
@@ -155,14 +168,14 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form method="patch" action="{{ url_for('client.update_scout') }}" id="updateform">
+          <form method="patch" action="{{ url_for('client.client_update') }}" id="updateform">
             <input type="hidden" name="id" id="sid">
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="basic-icon-default-cname">Company Name</label>
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company" class="input-group-text"><i class="bx bx-user"></i></span>
-                  <input type="text" class="form-control" id="cname">
+                  <input type="text" name="company" class="form-control" id="cname">
                 </div>
               </div>
             </div>
@@ -171,7 +184,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-country" class="input-group-text"><i class="bx bxs-flag"></i></span>
-                  <select class="form-select" name="" id="ccountry">
+                  <select class="form-select" name="country" id="ccountry">
                     <option value="">--select country--</option>
                     <option value="Nigeria">Nigeria</option>
                     <option value="South Africa" selected>South Africa</option>
@@ -182,11 +195,20 @@
               </div>
             </div>
             <div class="row mb-3">
+              <label class="col-sm-2 form-label" for="basic-icon-default-state">state</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-state" class="input-group-text"><i class="bx bx-flag"></i></span>
+                  <input type="text" name="state" class="form-control phone-mask" id="cstate">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
               <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Address</label>
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-address" class="input-group-text"><i class="bx bx-building"></i></span>
-                  <input type="text" class="form-control phone-mask" id="caddress">
+                  <input type="text" name="address" class="form-control phone-mask" id="caddress">
                 </div>
               </div>
             </div>
@@ -195,7 +217,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                  <input type="text" class="form-control" id="cemail">
+                  <input type="text" name="email" class="form-control" id="cemail">
                 </div>
               </div>
             </div>
@@ -205,7 +227,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
-                  <input type="text" class="form-control" id="cindustry">
+                  <input type="text" name="industry" class="form-control" id="cindustry">
                 </div>
               </div>
             </div>
@@ -215,7 +237,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
-                  <input type="text" class="form-control" id="cnumber" name="cnumber">
+                  <input type="text" name="number" class="form-control" id="cnumber">
                 </div>
               </div>
             </div>   
@@ -225,7 +247,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-status" class="input-group-text"><i class="bx bxs-cog"></i></span>
-                  <select class="form-select" name="" id="cstatus">
+                  <select class="form-select" name="status" id="cstatus">
                     <option value="pending" selected>pending</option>
                     <option value="active" selected>active</option>
                   </select>

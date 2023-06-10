@@ -4,9 +4,7 @@ import os
 #import geocoder
 
 
-
 baseURL = 'http://localhost:5000/api/v1/'
-
 
 
 def countries():

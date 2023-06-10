@@ -13,13 +13,13 @@
           <small class="text-muted float-end"><a href="{{ url_for('client.scout_list') }}"><i class="bx bx-list-ul"></i> Back to list</a></small>
         </div>
         <div class="card-body">
-          <form method="post" action="{{ url_for('client.save_client_contact_record') }}">
+          <form method="post" action="{{ url_for('client.save_add_scout') }}">
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="basic-icon-default-cname">Company Name <span>*</span></label>
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company" class="input-group-text"><i class="bx bx-user"></i></span>
-                  <input type="text" id="basic-icon-default-cname" class="form-control" placeholder="soas technology" aria-label="soas technology" aria-describedby="basic-icon-default-company" required>
+                  <input type="text" id="basic-icon-default-cname" class="form-control" placeholder="soas technology" aria-label="soas technology" aria-describedby="basic-icon-default-company" required name="name">
                 </div>
               </div>
             </div>
@@ -28,7 +28,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                  <input type="text" id="basic-icon-default-cemail" class="form-control" placeholder="" aria-label="" aria-describedby="basic-icon-default-cemail2" required>
+                  <input type="email" id="basic-icon-default-cemail" class="form-control" placeholder="soyemi.olanrewaju" aria-label="" aria-describedby="basic-icon-default-cemail2" required name="email">
                   <span id="basic-icon-default-cemail2" class="input-group-text">@example.com</span>
                 </div>
               </div>
@@ -38,28 +38,32 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
-                  <input type="text" id="basic-icon-default-cposition" class="form-control" placeholder="digital agency" aria-label="digital agency" aria-describedby="basic-icon-default-industry" required>
+                  <input type="text" id="basic-icon-default-cposition" class="form-control" placeholder="digital agency" aria-label="digital agency" aria-describedby="basic-icon-default-industry" required name="industry">
                 </div>
               </div>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 form-label" for="basic-icon-default-country">Country</label>
+              <label class="col-sm-2 form-label" for="basic-icon-default-country">Country <span>*</span></label>
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-country" class="input-group-text"><i class="bx bxs-flag"></i></span>
-                  <select class="form-select" name="">
+                  <select class="form-select" name="country" required>
                     <option value="">--select country--</option>
-                    <option value="pending" selected>Nigeria</option>
+                    {% if cl %}
+                      {% for x in cl %}
+                      <option value="{{x}}">{{ x }}</option>
+                      {% endfor %}
+                    {% endif %}
                   </select>
                 </div>
               </div>
             </div>
             <div class="row mb-3">
-              <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Address <span>*</span></label>
+              <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Address </label>
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-address" class="input-group-text"><i class="bx bx-building"></i></span>
-                  <input type="text" id="basic-icon-default-cphone" class="form-control phone-mask" placeholder="9b street area lagos state" aria-label="658 799 8941" aria-describedby="basic-icon-default-address" required>
+                  <input type="text" id="basic-icon-default-cphone" class="form-control phone-mask" placeholder="9b street area lagos state" aria-label="658 799 8941" aria-describedby="basic-icon-default-address" name="address">
                 </div>
               </div>
             </div>

@@ -4,7 +4,6 @@
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Client / Contact /</span> list</h4>
-    
     <div class="card">
       <h5 class="card-header"><a href="{{ url_for('client.client_contact_add') }}" class="btn btn-primary btn-sm"><i class="menu-icon tf-icons bx bx-user-plus"></i> Add record </a></h5>
       <div class="text-nowrap">
@@ -12,6 +11,7 @@
           <thead>
             <tr>
               <th>Contact name</th>
+              <th>Position</th>
               <th>Company</th>
               <th>Email</th>
               <th>Telephone</th>
@@ -24,6 +24,7 @@
             {% for a in det.data %}
             <tr>
               <td>{{ a.name }}</td>
+              <td>{{ a.position }}</td>
               <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ a.company }}</strong></td>
               <td><a href="mailto:{{ a.email }}">{{ a.email }}</a></td>
               <td><a href="tel:{{ a.number }}">{{ a.number }}</a></td>
@@ -66,7 +67,7 @@
 
       userid = document.getElementById(id).dataset.id
 
-      $('#user_id').val(userid)
+      $('#del_id').val(userid)
 
       $('#delete_modal').modal('show')
     })
@@ -85,8 +86,8 @@
           <h6> Are you sure to delete record?</h6>
         </div>
         <div class="modal-footer">
-          <form method="DELETE" action="{{ url_for('client.client_contact_delete') }}">
-            <input type="hidden" name="id" id="user_id">
+          <form method="post" action="{{ url_for('client.client_contact_delete') }}">
+            <input type="hidden" name="id" id="del_id">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
           <button type="submit" class="btn btn-danger">Yes</button>
           </form>

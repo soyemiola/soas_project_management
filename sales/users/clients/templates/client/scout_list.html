@@ -5,7 +5,6 @@
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Scouting /</span> prospect list</h4>
     
-    
     <div class="card">
       <h5 class="card-header"><a href="{{ url_for('client.add_scout') }}" class="btn btn-primary btn-sm"><i class="menu-icon tf-icons bx bx-user-plus"></i> Add company</a></h5>
       <div class="text-nowrap">
@@ -21,7 +20,7 @@
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
-            {% if det.success == True %}
+            {% if det.data | length > 0 %}
               {% for x in det.data %}
               <tr>
                 <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ x.name }}</strong></td>
@@ -118,14 +117,14 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form method="patch" action="{{ url_for('client.update_scout') }}" id="updateform">
+          <form method="post" action="{{ url_for('client.update_scout') }}" id="updateform">
             <input type="hidden" name="id" id="sid">
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="basic-icon-default-cname">Company Name</label>
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company" class="input-group-text"><i class="bx bx-user"></i></span>
-                  <input type="text" class="form-control" id="scompany">
+                  <input type="text" class="form-control" id="scompany" name="name">
                 </div>
               </div>
             </div>
@@ -134,7 +133,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                  <input type="text" class="form-control" id="semail">
+                  <input type="text" class="form-control" id="semail" name="email">
                 </div>
               </div>
             </div>
@@ -143,7 +142,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-industry" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
-                  <input type="text" class="form-control" id="sindustry">
+                  <input type="text" class="form-control" id="sindustry" name="industry">
                 </div>
               </div>
             </div>
@@ -152,9 +151,13 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-country" class="input-group-text"><i class="bx bxs-flag"></i></span>
-                  <select class="form-select" name="">
+                  <select class="form-select" name="country">
                     <option value="">--select country--</option>
-                    <option value="pending" selected>Nigeria</option>
+                    {% if cl %}
+                      {% for x in cl %}
+                      <option value="{{x}}">{{ x }}</option>
+                      {% endfor %}
+                    {% endif %}
                   </select>
                 </div>
               </div>
@@ -164,7 +167,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-address" class="input-group-text"><i class="bx bx-building"></i></span>
-                  <input type="text" class="form-control phone-mask" id="saddress">
+                  <input type="text" class="form-control phone-mask" id="saddress" name="address">
                 </div>
               </div>
             </div>
@@ -173,7 +176,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-comment" class="input-group-text"><i class="bx bx-message-square"></i></span>
-                  <textarea class="form-control" id="scomment"></textarea>
+                  <textarea class="form-control" id="scomment" name="comment"></textarea>
                 </div>
               </div>
             </div>
@@ -182,9 +185,11 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-status" class="input-group-text"><i class="bx bxs-cog"></i></span>
-                  <select class="form-select" name="">
+                  <select class="form-select" name="status">
                     <option value="">--select status--</option>
-                    <option value="pending" selected>Pending</option>
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In-progress</option>
+                    <option value="completed">completed</option>
                   </select>
                 </div>
               </div>

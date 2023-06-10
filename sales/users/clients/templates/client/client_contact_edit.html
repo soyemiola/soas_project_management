@@ -2,9 +2,8 @@
 {% block content %}
 <div class="content-wrapper">
 <div class="container-xxl flex-grow-1 container-p-y">
-  <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Client / Contact /</span> update record</h4>
+  <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Client / Contact /</span> update contact</h4>
   <div class="row">
-    
     <div class="col-xxl">
       <div class="card mb-4">
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -12,22 +11,23 @@
           <small class="text-muted float-end"><a href="{{ url_for('client.client_contact_list') }}"><i class="bx bx-list-ul"></i> Back to list</a></small>
         </div>
         <div class="card-body">
-          {% if det.success == True %}
-          <form method="patch" action="{{ url_for('client.client_contact_update') }}">
-            <input type="hidden" name="userid" value="{{ det.data.details.id }}">
+          <form method="post" action="{{ url_for('client.client_contact_update') }}">
+            <input type="hidden" name="id" value="{{ det.data.id }}">
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="basic-icon-default-role">Company <span>*</span></label>
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-buildings"></i></span>
-                  <select class="form-control" required>
+                  <select class="form-control" required name="company">
                     <option value="0">--select company--</option>
-                    {% for x in det.data.clients %}
-                      {% if x.name == det.data.details.company %}
-                        {% set sl = 'selected' %}
+                    {% if clients %}
+                      {% for x in clients.data %}
+                      {% if x.id == det.data.clientid %}
+                        {% set sel = 'selected' %}
                       {% endif %}
-                      <option value="{{ x.id }}" {{ sl }}>{{ x.name }}</option> 
-                    {% endfor %}
+                      <option value="{{ x.id }}" {{sel}}>{{ x.name }}</option>
+                      {% endfor %}
+                    {% endif %}
                   </select>
                 </div>
               </div>
@@ -37,7 +37,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-cname2" class="input-group-text"><i class="bx bx-user"></i></span>
-                  <input type="text" id="basic-icon-default-cname" class="form-control" aria-describedby="basic-icon-default-cname2" required value="{{ det.data.details.name }}">
+                  <input type="text" id="basic-icon-default-cname" class="form-control" placeholder="" aria-label="soyemi samuel" aria-describedby="basic-icon-default-cname2" required name="name" value="{{ det.data.name }}">
                 </div>
               </div>
             </div>
@@ -46,7 +46,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                  <input type="text" id="basic-icon-default-cemail" class="form-control" value="{{ det.data.details.email }}" aria-describedby="basic-icon-default-cemail2" required>
+                  <input type="email" id="basic-icon-default-cemail" class="form-control" placeholder="" aria-label="" aria-describedby="basic-icon-default-cemail2" required name="email" value="{{ det.data.email }}">
                   <span id="basic-icon-default-cemail2" class="input-group-text">@example.com</span>
                 </div>
               </div>
@@ -56,7 +56,7 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-cposition2" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
-                  <input type="text" id="basic-icon-default-cposition" class="form-control" value="{{ det.data.details.position }}" aria-describedby="basic-icon-default-cposition2" required>
+                  <input type="text" id="basic-icon-default-cposition" class="form-control" placeholder="" aria-label="" aria-describedby="basic-icon-default-cposition2" required name="position" value="{{ det.data.position }}">
                 </div>
               </div>
             </div>
@@ -65,7 +65,25 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="basic-icon-default-cphone2" class="input-group-text"><i class="bx bx-phone"></i></span>
-                  <input type="text" id="basic-icon-default-cphone" class="form-control phone-mask" value="{{ det.data.details.number }}" aria-describedby="basic-icon-default-cphone2" required>
+                  <input type="text" id="basic-icon-default-cphone" class="form-control phone-mask" placeholder="" aria-label="" aria-describedby="basic-icon-default-cphone2" required name="number" value="{{ det.data.number }}">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="basic-icon-default-status">Status <span>*</span></label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-status" class="input-group-text"><i class="bx bx-cog"></i></span>
+                  <select class="form-control" required name="status">
+                    {% if det.data.status == 'active' %}
+                      {% set sel = 'selected' %}
+                    {% elif det.data.status == 'inactive' %}
+                      {% set isel = 'selected' %}
+                    {% endif %}
+                    <option value="0">--select status--</option>
+                    <option value="active" {{sel}}>Active</option>
+                    <option value="inactive" {{isel}}>Inactive</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -76,7 +94,6 @@
               </div>
             </div>
           </form>
-          {% endif %}
         </div>
       </div>
     </div>
@@ -86,115 +103,3 @@
   <div class="content-backdrop fade"></div>
 </div>
 {% endblock %}
-
-
-{% block scripts %}
-  <script type="text/javascript">
-    $('.add_contact').click(function () {
-      $('#add_contact_modal').modal('show')
-    });
-
-    const rand = function(){
-      return Math.floor((Math.random() * 10000) + 1 )
-    }
-
-    const remove_contact = function () {
-      id = $(this).attr('id')
-      console.log(id)
-      $('#'+id).remove()
-    }
-
-
-    const addContact = function (){
-      id = rand()
-
-      name = $('#basic-icon-default-cname').val()
-      email = $('#basic-icon-default-cemail').val()
-      position = $('#basic-icon-default-cposition').val()
-      number = $('#basic-icon-default-cphone').val()
-
-      crdt = `<div class="btn btn-secondary btn-sm" style="margin-right: 5px" id="`+ id +`" onclick="remove_contact()">
-                <input type="hidden" name="crdt_contact" value="`+ name +', '+ email +', '+ position +', '+ number +`">
-                  `+ name +`
-                <span class="bx bx-user-minus"></span>
-              </div>`
-
-      if (name != '' || email != '' || position != '' || number != '') {
-        document.getElementById('error_alert').style.display = 'none';
-
-        $('#crtdContact').append(crdt)
-        
-        name = $('#basic-icon-default-cname').val('')
-        email = $('#basic-icon-default-cemail').val('')
-        position = $('#basic-icon-default-cposition').val('')
-        number = $('#basic-icon-default-cphone').val('')
-
-        $('#add_contact_modal').modal('hide')
-
-      }else{
-        document.getElementById('error_alert').style.display = 'block';
-      }
-    }
-  </script>
-{% endblock %}
-
-{% block modals %}
-  <div class="modal fade" id="add_contact_modal" tabindex="-1" aria-modal="true" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel1">Add contact person</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="basic-icon-default-cname">Name <span>*</span></label>
-              <div class="col-sm-10">
-                <div class="input-group input-group-merge">
-                  <span id="basic-icon-default-cname2" class="input-group-text"><i class="bx bx-user"></i></span>
-                  <input type="text" id="basic-icon-default-cname" class="form-control" value="" placeholder="soyemi samuel" aria-label="soyemi samuel" aria-describedby="basic-icon-default-cname2">
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="basic-icon-default-cemail">Email <span>*</span></label>
-              <div class="col-sm-10">
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                  <input type="text" id="basic-icon-default-cemail" class="form-control" placeholder="soyemi.olanrewaju" aria-label="soyemi.olanrewaju" aria-describedby="basic-icon-default-cemail2">
-                  <span id="basic-icon-default-cemail2" class="input-group-text">@example.com</span>
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="basic-icon-default-cposition">Position <span>*</span></label>
-              <div class="col-sm-10">
-                <div class="input-group input-group-merge">
-                  <span id="basic-icon-default-cposition2" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
-                  <input type="text" id="basic-icon-default-cposition" class="form-control" value="" placeholder="sales manager" aria-label="sales manager" aria-describedby="basic-icon-default-cposition2">
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 form-label" for="basic-icon-default-cphone">Phone No <span>*</span></label>
-              <div class="col-sm-10">
-                <div class="input-group input-group-merge">
-                  <span id="basic-icon-default-cphone2" class="input-group-text"><i class="bx bx-phone"></i></span>
-                  <input type="text" id="basic-icon-default-cphone" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-cphone2">
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3" id="error_alert" style="display: none;">
-              <div class="col-sm-12">
-                <div class="alert alert-primary" role="alert">All fields required!</div>
-              </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" onclick="addContact()">Add</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endblock %}
