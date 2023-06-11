@@ -2,10 +2,8 @@
 {% block content %}
 <div class="content-wrapper">
 <div class="container-xxl flex-grow-1 container-p-y">
-  <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project /</span> Update Details</h4>
-  <!-- Basic Layout & Basic with Icons -->
+  <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project /</span> update details</h4>
   <div class="row">
-    
     <div class="col-xxl">
       <div class="card mb-4">
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -13,79 +11,144 @@
           <small class="text-muted float-end"><a href="{{ url_for('project.project_list') }}"><i class="bx bx-list-ul"></i> Back to list</a></small>
         </div>
         <div class="card-body">
-          <form method="post" action="{{ url_for('project.save_new_project') }}">
+          <form method="post" action="{{ url_for('project.update_project') }}">
+            <input type="hidden" name="project_id" value="{{ project.data.id }}">
             <div class="row">
               <div class="col-xs-12 col-md-7">
                     <form>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-name">project name</label>
                           <div class="col-sm-10">
-                            <input type="text" class="form-control" id="basic-default-name" placeholder="project name">
+                            <input type="text" class="form-control" id="basic-default-name" placeholder="project name" name="project_name" value="{{ project.data.name }}">
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-desc">Project Description</label>
+                          <div class="col-sm-10">
+                            <textarea id="basic-default-desc" class="form-control" placeholder="project description" aria-label="project description" aria-describedby="basic-icon-default-desc" name="project_desc">{{ project.data.description }}</textarea>
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-contact">Project type</label>
                           <div class="col-sm-10">
-                            <select class="form-select" name="contact">
+                            <select class="form-select project_type" name="project_type" id="project_type">
                               <option value="" selected>--select project type--</option>
-                              <option value="">Onsite</option>
-                              <option value="">Virtual</option>
-                              <option value="">Virtual & Onsite</option>
-                              <option value="">Email</option>
+                              {% if project.data.project_type | lower == 'onsite' %}
+                                {% set ost = 'selected' %}
+                              {% elif project.data.project_type | lower == 'virtual' %}
+                                {% set vrt = 'selected' %}
+                              {% elif project.data.project_type | lower == 'virtual_and_onsite' %}
+                                {% set vrt_ost = 'selected' %}
+                              {% elif project.data.project_type | lower == 'email' %}
+                                {% set eml = 'selected' %}
+                              {% endif %}
+                              <option value="onsite" {{ ost }}>Onsite</option>
+                              <option value="virtual" {{ vrt }}>Virtual</option>
+                              <option value="virtual_and_onsite" {{ vrt_ost }}>Virtual & Onsite</option>
+                              <option value="email" {{ eml }}>Email</option>
                             </select>
-                            <input type="text" name="address" class="form-control mt-1" placeholder="enter address for onsite project">
+                            {% if project.data.project_type | lower != 'virtual' and project.data.project_type | lower != 'email' %}
+                              {% set add = 'block' %}
+                            {% else %}
+                              {% set add = 'none' %}
+                            {% endif %}
+
+                            <input type="text" name="project_address" id="address" class="form-control mt-1" placeholder="enter address for onsite project" style="display: {{add}};" value="{{ project.data.location }}">
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label for="html5-date-input" class="col-md-2 col-form-label">Date</label>
+                          <div class="col-md-10">
+                            <input class="form-control" type="date" name="project_date" id="html5-date-input" value="{{ project.data.postdate }}">
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-company">Company</label>
                           <div class="col-sm-10">
-                            <select class="form-select" name="client">
+                            <select class="form-select" name="project_client_id" id="client">
                               <option value="" selected>--select client--</option>
-                              <option value="">SOAS Technology</option>
+                              {% if clist.data | length > 0 %}
+                                {% for x in clist.data %}
+                                {% if x.id == project.data.client_id %}
+                                  {% set cl = 'selected' %}
+                                {% endif %}
+                                  <option value="{{ x.id }}" {{ cl }}>{{ x.name }}</option> 
+                                {% endfor %}
+                              {% endif %}
                             </select>
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-contact">Contact person</label>
-                          <div class="col-sm-10">
-                            <select class="form-select" name="contact">
-                              <option value="" selected>--select contact persons--</option>
-                              <option value="">Soyemi Olanrewaju</option>
+                          <div class="col-sm-10" id="contactList">
+                            <select class="form-select" name="contact" id="contact">
+                              <option value="" selected disabled>--select contact persons--</option>
+                              {% if ccu %}
+                                {% for c in ccu.data %}
+                                <option value="{{ c.id }}, {{ c.name }}, {{ c.email }}, {{ c.position }}, {{ c.number }}">{{ c.name }}</option>
+                                {% endfor %}
+                              {% endif %}
                             </select>
-                            <div class="btn btn-secondary btn-sm mt-2" style="margin-right: 5px" id="3129" onclick="remove_contact()">
-                              <input type="hidden" name="crdt_contact" value="Olanrewaju Soyemi, soyemi.olanrewaju1@gmail.com, sales, 1234567890">
-                                Olanrewaju Soyemi
-                              <span class="bx bx-user-minus"></span>
-                            </div>
+                            {% for acc in ccu.data %}
+                              {% for cp in project.data.contact_ids %}
+                                {% if cp == acc.id %}
+                                <div class="btn btn-primary btn-sm mt-2" style="margin-right: 5px" id="{{loop.index}}">
+                                  <input type="hidden" name="project_contact_ids" value="{{acc.id}}">
+                                                    {{acc.name}} 
+                                  <span class="bx bx-user-minus" onclick="remove_contact('{{loop.index}}')"></span>
+                                </div>
+                                {% endif %}
+                              {% endfor %}
+                            {% endfor %}
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-team">Sales Lead</label>
                           <div class="col-sm-10">
-                            <select class="form-select" name="team_lead">
-                              <option value="" selected>--select team lead--</option>
-                              <option value="">Soyemi Olanrewaju</option>
+                            <select class="form-select" name="project_team_lead">
+                              <option value="" selected disabled>--select team lead--</option>
+                              {% if ulist.data | length > 0 %}
+                                {% for x in ulist.data %}
+                                  {% if project.data.team_lead_id == x.id %}
+                                    {% set sel = 'selected' %}
+                                  {% endif %}
+                                <option value="{{ x.id }}" {{ sel }}>{{ x.fullname }}</option>
+                                {% endfor %}
+                              {% endif %}
                             </select>
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-team">Sales Team</label>
-                          <div class="col-sm-10">
-                            <select class="form-select" name="team">
-                              <option value="" selected>--select team--</option>
-                              <option value="">Soyemi Olanrewaju</option>
+                          <div class="col-sm-10" id="selectedteam">
+                            <select class="form-select" name="team" id="team">
+                              <option value="" selected disabled>--select team members--</option>
+                              {% if ulist.data | length > 0 %}
+                                {% for x in ulist.data %}
+                                <option value="{{ x.id }}, {{ x.fullname }}">{{ x.fullname }}</option>
+                                {% endfor %}
+                              {% endif %}
                             </select>
-                            <div class="btn btn-secondary btn-sm mt-2" style="margin-right: 5px" id="3129" onclick="remove_contact()">
-                              <input type="hidden" name="crdt_contact" value="Olanrewaju Soyemi, soyemi.olanrewaju1@gmail.com, sales, 1234567890">
-                                Olanrewaju Soyemi
-                              <span class="bx bx-user-minus"></span>
-                            </div>
+                            
+                            {% if ulist %}
+                              {% for zaz in ulist.data %}
+                                {% for aaa in project.data.team_ids %}
+                                  {% if aaa == zaz.id %}
+                                    <div class="btn btn-primary btn-sm mt-2" style="margin-right: 5px" id="{{ zaz.id }}">
+                                      <input type="hidden" name="project_team" value="{{ zaz.id }}">
+                                      {{ zaz.fullname }}
+                                      <span class="bx bx-user-minus" onclick="remove_contact('{{ zaz.id }}')"></span>
+                                    </div>
+                                  {% endif %}
+                                {% endfor %}
+                              {% endfor %}
+                            {% endif %}
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-message">Project Comment <small>(optional)</small></label>
                           <div class="col-sm-10">
-                            <textarea id="basic-default-message" class="form-control" placeholder="project comment (optional)" aria-label="Hi, Do you have a moment to talk Joe?" aria-describedby="basic-icon-default-message2"></textarea>
+                            <textarea id="basic-default-comment" class="form-control" placeholder="project comment (optional)" aria-label="project comment (optional)" aria-describedby="basic-icon-default-comment" name="project_comment">{{ project.data.comment }}</textarea>
                           </div>
                         </div>
                         <div class="row justify-content-end">
@@ -94,39 +157,6 @@
                           </div>
                         </div>
                       </form>
-              </div>
-              <div class="col-xs-12 col-md-5">
-                <div class="card-body">
-                  <div class="">
-                    <h5 class="card-title">Project Name: <span id="project_name">France Sales Target</span></h5>
-
-                      <div class="card-subtitle text-muted mb-3"><b>Project type:</b> <br>
-
-                        <span id="project_type">Onsite</span></div>
-
-                      <div class="card-subtitle text-muted mb-3"><b>Client:</b> <br>
-
-                        <span id="client">SOAS Technology</span></div>
-
-                      <div class="card-subtitle text-muted mb-3"><b>Contact person(s):</b> <br>
-
-                        <span id="contact_person">Soyemi Olanrewaju</span></div>
-
-                      <div class="card-subtitle text-muted mb-3"><b>Sales Lead:</b> <br>
-
-                        <span id="sales_lead">Atanda Samuel</span></div>
-
-                      <div class="card-subtitle text-muted mb-3"><b>Sales Team (s):</b> <br>
-
-                        <span id="sales_team">Bello Rasheed, Taiwo Ishola</span></div>
-
-                      <div class="card-subtitle text-muted mb-3"><b>Project comment:</b> <br>
-
-                        <span id="project_comment">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
-                        incididunt ut labore et dolore magna aliqua.</span>
-                      </div>
-                  </div>
-                </div>
               </div>
             </div>
           </form>
@@ -141,3 +171,192 @@
 {% endblock %}
 
 
+{% block scripts %}
+  <script type="text/javascript">
+    $('.project_type').on('change', function(){
+      id = $(this).attr('id')
+      xa = document.getElementById(id).value;
+      
+      if(xa === 'onsite' || xa === 'virtual_and_onsite' ){
+        document.getElementById('address').style.display = 'block';
+      }else{
+        document.getElementById('address').style.display = 'none';
+      }
+    });
+
+    $('#client').on('change', function(){
+      id = $(this).attr('id')
+      xa = document.getElementById(id).value;
+      
+      $.ajax({
+        method: 'get',
+        url: 'http://localhost:5000/api/v1/contacts/client/'+xa,
+        contentType: 'appliecation/json',
+
+        beforeSend: function(){
+          $('#contact option').remove();
+          $('#contact').append('<option value="" selected disabled>--select contact persons--</option>');
+        },
+
+        success: function(res){
+          for (var i = 0; i < res.data.length; i++) {
+            
+            opt = `<option value="`+res.data[i].id+`, `+res.data[i].name+`, `+res.data[i].email+`, `+res.data[i].position+`, `+res.data[i].number+`">`+res.data[i].name+`</option>`
+            $('#contact').append(opt)
+          }
+        },
+
+        error: function(e){
+          console.log(e)
+        }
+      })
+    })
+
+    $('.add_contact').click(function () {
+      $('#add_contact_modal').modal('show')
+    });
+
+    $('#contact').on('change', function(){
+      id = $(this).attr('id')
+      xa = document.getElementById(id).value;
+
+      det = xa.split(',');
+      det_id = det[0];
+      det_name = det[1];
+
+      c_id = rand();
+
+      sel = `<div class="btn btn-primary btn-sm mt-2" style="margin-right: 5px" id="`+c_id+`">
+              <input type="hidden" name="project_contact_ids" value="`+det_id+`">
+                                `+det_name+`
+              <span class="bx bx-user-minus" onclick="remove_contact(`+c_id+`)"></span>
+            </div>`;
+
+      $('#contactList').append(sel)
+    });
+
+    $('#team').on('change', function(){
+      id = $(this).attr('id')
+      xa = document.getElementById(id).value;
+
+      det = xa.split(',');
+      det_id = det[0];
+      det_name = det[1];
+
+      c_id = rand();
+
+      sel = `<div class="btn btn-primary btn-sm mt-2" style="margin-right: 5px" id="`+c_id+`">
+              <input type="hidden" name="project_team" value="`+det_id+`">
+                                `+det_name+`
+              <span class="bx bx-user-minus" onclick="remove_contact(`+c_id+`)"></span>
+            </div>`;
+
+      $('#selectedteam').append(sel)
+    });
+
+    const rand = function(){
+      return Math.floor((Math.random() * 10000) + 1 )
+    }
+
+    const remove_contact = function (id) {
+      $('#'+id).remove()
+    }
+
+
+    const addContact = function (){
+      id = rand()
+
+      name = $('#basic-icon-default-cname').val()
+      email = $('#basic-icon-default-cemail').val()
+      position = $('#basic-icon-default-cposition').val()
+      number = $('#basic-icon-default-cphone').val()
+
+      crdt = `<div class="btn btn-secondary btn-sm" style="margin-right: 5px" id="`+ id +`" onclick="remove_contact()">
+                <input type="hidden" name="crdt_contact" value="`+ name +', '+ email +', '+ position +', '+ number +`">
+                  `+ name +`
+                <span class="bx bx-user-minus"></span>
+              </div>`
+
+      if (name != '' || email != '' || position != '' || number != '') {
+        document.getElementById('error_alert').style.display = 'none';
+
+        $('#crtdContact').append(crdt)
+        
+        name = $('#basic-icon-default-cname').val('')
+        email = $('#basic-icon-default-cemail').val('')
+        position = $('#basic-icon-default-cposition').val('')
+        number = $('#basic-icon-default-cphone').val('')
+
+        $('#add_contact_modal').modal('hide')
+
+      }else{
+        document.getElementById('error_alert').style.display = 'block';
+      }
+    }
+
+
+
+
+  </script>
+{% endblock %}
+
+{% block modals %}
+  <div class="modal fade" id="add_contact_modal" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Add contact person</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+              <label class="col-sm-3 col-form-label" for="basic-icon-default-cname">Name <span>*</span></label>
+              <div class="col-sm-9">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-cname2" class="input-group-text"><i class="bx bx-user"></i></span>
+                  <input type="text" id="basic-icon-default-cname" class="form-control" value="" placeholder="soyemi samuel" aria-label="soyemi samuel" aria-describedby="basic-icon-default-cname2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label" for="basic-icon-default-cemail">Email <span>*</span></label>
+              <div class="col-sm-9">
+                <div class="input-group input-group-merge">
+                  <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                  <input type="text" id="basic-icon-default-cemail" class="form-control" placeholder="soyemi.olanrewaju" aria-label="soyemi.olanrewaju" aria-describedby="basic-icon-default-cemail2">
+                  <span id="basic-icon-default-cemail2" class="input-group-text">@example.com</span>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label" for="basic-icon-default-cposition">Position <span>*</span></label>
+              <div class="col-sm-9">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-cposition2" class="input-group-text"><i class="bx bxs-user-badge"></i></span>
+                  <input type="text" id="basic-icon-default-cposition" class="form-control" value="" placeholder="sales manager" aria-label="sales manager" aria-describedby="basic-icon-default-cposition2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-3 form-label" for="basic-icon-default-cphone">Phone No <span>*</span></label>
+              <div class="col-sm-9">
+                <div class="input-group input-group-merge">
+                  <span id="basic-icon-default-cphone2" class="input-group-text"><i class="bx bx-phone"></i></span>
+                  <input type="text" id="basic-icon-default-cphone" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-cphone2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3" id="error_alert" style="display: none;">
+              <div class="col-sm-12">
+                <div class="alert alert-primary" role="alert">All fields required!</div>
+              </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="addContact()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}

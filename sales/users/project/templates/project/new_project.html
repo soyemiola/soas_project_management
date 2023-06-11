@@ -3,9 +3,7 @@
 <div class="content-wrapper">
 <div class="container-xxl flex-grow-1 container-p-y">
   <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project /</span> new record</h4>
-  <!-- Basic Layout & Basic with Icons -->
   <div class="row">
-    
     <div class="col-xxl">
       <div class="card mb-4">
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -20,90 +18,87 @@
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-name">project name</label>
                           <div class="col-sm-10">
-                            <input type="text" class="form-control" id="basic-default-name" placeholder="project name">
+                            <input type="text" class="form-control" id="basic-default-name" placeholder="project name" name="project_name">
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-desc">Project Description</label>
                           <div class="col-sm-10">
-                            <textarea id="basic-default-desc" class="form-control" placeholder="project description" aria-label="project description" aria-describedby="basic-icon-default-desc"></textarea>
+                            <textarea id="basic-default-desc" class="form-control" placeholder="project description" aria-label="project description" aria-describedby="basic-icon-default-desc" name="project_desc"></textarea>
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-contact">Project type</label>
                           <div class="col-sm-10">
-                            <select class="form-select" name="contact">
+                            <select class="form-select project_type" name="project_type" id="project_type">
                               <option value="" selected>--select project type--</option>
-                              <option value="">Onsite</option>
-                              <option value="">Virtual</option>
-                              <option value="">Virtual & Onsite</option>
-                              <option value="">Email</option>
+                              <option value="onsite">Onsite</option>
+                              <option value="virtual">Virtual</option>
+                              <option value="virtual_and_onsite">Virtual & Onsite</option>
+                              <option value="email">Email</option>
                             </select>
-                            <input type="text" name="address" class="form-control mt-1" placeholder="enter address for onsite project">
+                            <input type="text" name="project_address" id="address" class="form-control mt-1" placeholder="enter address for onsite project" style="display: none;">
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label for="html5-date-input" class="col-md-2 col-form-label">Date</label>
                           <div class="col-md-10">
-                            <input class="form-control" type="date" value="2021-06-18" id="html5-date-input">
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <label for="html5-date-duration" class="col-md-2 col-form-label">Duration</label>
-                          <div class="col-md-10">
-                            <input class="form-control" type="date" value="2021-06-18" id="html5-date-duration">
+                            <input class="form-control" type="date" name="project_date" id="html5-date-input">
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-company">Company</label>
                           <div class="col-sm-10">
-                            <select class="form-select" name="client">
+                            <select class="form-select" name="project_client_id" id="client">
                               <option value="" selected>--select client--</option>
-                              <option value="">SOAS Technology</option>
+                              {% if clist.data | length > 0 %}
+                                {% for x in clist.data %}
+                                  <option value="{{ x.id }}">{{ x.name }}</option>
+
+                                {% endfor %}
+                              {% endif %}
                             </select>
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-contact">Contact person</label>
-                          <div class="col-sm-10">
-                            <select class="form-select" name="contact">
-                              <option value="" selected>--select contact persons--</option>
-                              <option value="">Soyemi Olanrewaju</option>
+                          <div class="col-sm-10" id="contactList">
+                            <select class="form-select" name="contact" id="contact">
+                              <option value="" selected disabled>--select contact persons--</option>
                             </select>
-                            <div class="btn btn-secondary btn-sm mt-2" style="margin-right: 5px" id="3129" onclick="remove_contact()">
-                              <input type="hidden" name="crdt_contact" value="Olanrewaju Soyemi, soyemi.olanrewaju1@gmail.com, sales, 1234567890">
-                                Olanrewaju Soyemi
-                              <span class="bx bx-user-minus"></span>
-                            </div>
+                            
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label class="col-sm-2 col-form-label" for="basic-default-team">Sales Lead</label>
+                          <label class="col-sm-2 col-form-label" for="basic-default-team">Team Lead</label>
                           <div class="col-sm-10">
-                            <select class="form-select" name="team_lead">
-                              <option value="" selected>--select team lead--</option>
-                              <option value="">Soyemi Olanrewaju</option>
+                            <select class="form-select" name="project_team_lead">
+                              <option value="" selected disabled>--select team lead--</option>
+                              {% if ulist.data | length > 0 %}
+                                {% for x in ulist.data %}
+                                <option value="{{ x.id }}">{{ x.fullname }}</option>
+                                {% endfor %}
+                              {% endif %}
                             </select>
                           </div>
                         </div>
                         <div class="row mb-3">
-                          <label class="col-sm-2 col-form-label" for="basic-default-team">Sales Team</label>
-                          <div class="col-sm-10">
-                            <select class="form-select" name="team">
-                              <option value="" selected>--select team--</option>
-                              <option value="">Soyemi Olanrewaju</option>
+                          <label class="col-sm-2 col-form-label" for="basic-default-team">Team members</label>
+                          <div class="col-sm-10" id="selectedteam">
+                            <select class="form-select" name="team" id="team">
+                              <option value="" selected disabled>--select team members--</option>
+                              {% if ulist.data | length > 0 %}
+                                {% for x in ulist.data %}
+                                <option value="{{ x.id }}, {{ x.fullname }}">{{ x.fullname }}</option>
+                                {% endfor %}
+                              {% endif %}
                             </select>
-                            <div class="btn btn-secondary btn-sm mt-2" style="margin-right: 5px" id="3129" onclick="remove_contact()">
-                              <input type="hidden" name="crdt_contact" value="Olanrewaju Soyemi, soyemi.olanrewaju1@gmail.com, sales, 1234567890">
-                                Olanrewaju Soyemi
-                              <span class="bx bx-user-minus"></span>
-                            </div>
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-message">Project Comment <small>(optional)</small></label>
                           <div class="col-sm-10">
-                            <textarea id="basic-default-comment" class="form-control" placeholder="project comment (optional)" aria-label="project comment (optional)" aria-describedby="basic-icon-default-comment"></textarea>
+                            <textarea id="basic-default-comment" class="form-control" placeholder="project comment (optional)" aria-label="project comment (optional)" aria-describedby="basic-icon-default-comment" name="project_comment"></textarea>
                           </div>
                         </div>
                         <div class="row justify-content-end">
@@ -113,7 +108,7 @@
                         </div>
                       </form>
               </div>
-              <div class="col-xs-12 col-md-5">
+              <!-- <div class="col-xs-12 col-md-5">
                 <div class="card-body">
                   <div class="">
                     <h5 class="card-title">Project Name: <span id="project_name">France Sales Target</span></h5>
@@ -145,7 +140,7 @@
                       </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </form>
         </div>
@@ -161,17 +156,92 @@
 
 {% block scripts %}
   <script type="text/javascript">
+    $('.project_type').on('change', function(){
+      id = $(this).attr('id')
+      xa = document.getElementById(id).value;
+      
+      if(xa === 'onsite' || xa === 'virtual_and_onsite' ){
+        document.getElementById('address').style.display = 'block';
+      }else{
+        document.getElementById('address').style.display = 'none';
+      }
+    });
+
+    $('#client').on('change', function(){
+      id = $(this).attr('id')
+      xa = document.getElementById(id).value;
+      
+      $.ajax({
+        method: 'get',
+        url: 'http://localhost:5000/api/v1/contacts/client/'+xa,
+        contentType: 'appliecation/json',
+
+        beforeSend: function(){
+          $('#contact option').remove();
+          $('#contact').append('<option value="" selected disabled>--select contact persons--</option>');
+        },
+
+        success: function(res){
+          for (var i = 0; i < res.data.length; i++) {
+            
+            opt = `<option value="`+res.data[i].id+`, `+res.data[i].name+`, `+res.data[i].email+`, `+res.data[i].position+`, `+res.data[i].number+`">`+res.data[i].name+`</option>`
+            $('#contact').append(opt)
+          }
+        },
+
+        error: function(e){
+          console.log(e)
+        }
+      })
+    })
+
     $('.add_contact').click(function () {
       $('#add_contact_modal').modal('show')
+    });
+
+    $('#contact').on('change', function(){
+      id = $(this).attr('id')
+      xa = document.getElementById(id).value;
+
+      det = xa.split(',');
+      det_id = det[0];
+      det_name = det[1];
+
+      c_id = rand();
+
+      sel = `<div class="btn btn-primary btn-sm mt-2" style="margin-right: 5px" id="`+c_id+`">
+              <input type="hidden" name="project_contact_ids" value="`+det_id+`">
+                                `+det_name+`
+              <span class="bx bx-user-minus" onclick="remove_contact(`+c_id+`)"></span>
+            </div>`;
+
+      $('#contactList').append(sel)
+    });
+
+    $('#team').on('change', function(){
+      id = $(this).attr('id')
+      xa = document.getElementById(id).value;
+
+      det = xa.split(',');
+      det_id = det[0];
+      det_name = det[1];
+
+      c_id = rand();
+
+      sel = `<div class="btn btn-primary btn-sm mt-2" style="margin-right: 5px" id="`+c_id+`">
+              <input type="hidden" name="project_team" value="`+det_id+`">
+                                `+det_name+`
+              <span class="bx bx-user-minus" onclick="remove_contact(`+c_id+`)"></span>
+            </div>`;
+
+      $('#selectedteam').append(sel)
     });
 
     const rand = function(){
       return Math.floor((Math.random() * 10000) + 1 )
     }
 
-    const remove_contact = function () {
-      id = $(this).attr('id')
-      console.log(id)
+    const remove_contact = function (id) {
       $('#'+id).remove()
     }
 
@@ -206,6 +276,10 @@
         document.getElementById('error_alert').style.display = 'block';
       }
     }
+
+
+
+
   </script>
 {% endblock %}
 

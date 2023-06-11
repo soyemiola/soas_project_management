@@ -104,7 +104,10 @@
                         <div class="form-group mb-2">
                           <label>Select status:</label>
                           <select class="form-select form-control-sm" name="status">
+                            <option value="">Initiated</option>
                             <option value="">In-progress</option>
+                            <option value="">Completed</option>
+                            <option value="">Terminated</option>
                           </select>
                         </div>
                         <div class="form-group">
@@ -154,7 +157,7 @@
                           <ul class="nav nav-pills mb-3" role="tablist">
                             <li class="nav-item">
                               <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-pod_{{loop.index}}" aria-controls="navs-pills-top-pod_{{loop.index}}" aria-selected="true">
-                              Minutes Note
+                              Note
                               </button>
                             </li>
                             <li class="nav-item">
@@ -184,7 +187,7 @@
                                     With supporting text below 
 
                                     <span style="float: right;">
-                                      <small  class="badge badge-sm bg-label-primary">pending</small>
+                                      <small  class="badge badge-sm bg-label-success">done</small>
                                       <i class="bx bx-edit" style="cursor:pointer;" onclick="opentask('id')"></i>                                     
                                     </span>
 
@@ -197,7 +200,7 @@
 
 
                                     <span style="float: right;">
-                                      <small  class="badge badge-sm bg-label-success">pending</small>
+                                      <small  class="badge badge-sm bg-label-primary">pending</small>
                                       <i class="bx bx-edit" style="cursor:pointer;"></i>                                     
                                     </span>
                                   </label>
