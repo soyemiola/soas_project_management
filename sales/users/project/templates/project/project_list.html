@@ -17,6 +17,7 @@
                           {% if loop.index == 1 %}
                             {% set active = 'active' %}
                           {% endif %}
+
                           {% if st | lower == 'ongoing'%}
                             {% set icon = 'bxs-cog' %}
                           {% elif st | lower == 'completed'%}
@@ -29,16 +30,21 @@
                           <li class="nav-item">
                             <button type="button" class="nav-link {{active}}" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-justified-{{st}}" aria-controls="navs-pills-justified-home" aria-selected="true">
                               <i class="tf-icons bx {{icon}}"></i> {{ st }}
-                                {% set cnt = 0 %} 
+                                {% set glob = {'count': 0 | int } %}
+
                                 {% if projects.data | length > 0 %}
                                   {% for x in projects.data %}
                                     {% if st | lower == x.status %}
-                                      {% set cnt = cnt + 1 %}
+
+                                      {% set xs = glob.count + 1 %}
+                                      {% set _ = glob.update({'count': xs }) %} 
+
                                     {% endif %}
                                   {% endfor %}
                                 {% endif %}
                                 <!-- use the global variable -->
-                              <!-- <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-info">{{ cnt }}</span> -->
+                              <span class="badge rounded-pill badge-center h-px-20 w-px-20 bg-primary">{{ glob.count }}</span>
+
                             </button>
                           </li>
                         {% endfor %}
@@ -88,17 +94,16 @@
                                         
                                         {% if x.status | lower == 'pending' %}
                                         <tr>
-                                          <td><strong>{{ x.name }} </strong><br><small>{{ x.postdate}}</small></td>
+                                          <td><strong>{{ x.name }} </strong><br><small>{{ x.postdate | convert_date_time }}</small></td>
                                           <td><a href="#"><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ client_info.data.name }}</strong></a></td>
 
                                           <td>
                                             {% if contacts %}
-
                                               {% for c in contacts %}
                                               <a href="#">{{ c[0].name }}</a>
                                               {% endfor %}
                                             {% else %}
-                                            {{ 'error fetching contact details' }}
+                                              {{ 'error fetching contact details' }}
                                             {% endif %}
                                           </td>
 
@@ -109,8 +114,10 @@
                                             {% if prj_team and prj_team | length > 0 %}
                                               <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
                                               {% for t in prj_team %}
+                                                
                                                 <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="{{ t[0].fullname }}">
-                                                  <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle">
+                                                  <a href="{{ url_for('member.member_profile', userid=t[0].id) }}">
+                                                  <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle"></a>
                                                 </li>
                                               {% endfor %}
                                               </ul>

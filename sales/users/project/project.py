@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, Response
 import requests
 from sales import baseURL
+from datetime import datetime
 
 project = Blueprint('project', __name__, url_prefix='/', template_folder='templates')
 
@@ -164,7 +165,47 @@ def delete_project():
 
 @project.get('/soassales/project/<int:id>/project-progress-details')
 def project_details(id):
-	return render_template('project/project_details.html', menu=menu, submenu='pr')
+	try:
+		# get project details
+		project_url = baseURL+''.join(f'projects/details/{id}')
+		project = requests.get(project_url)
+		uproject = project.json()
+
+
+		if project.status_code != 200:
+			# put request response in nested if condition
+			flash(clist['msg'], 'danger')
+		else:
+			# project contact user
+			client_id = uproject['data']['client_id']
+			contact_ids = uproject['data']['contact_ids']
+
+			project_client_contacts_url = baseURL+''.join(f'contacts/project/{client_id}/contacts/{contact_ids}')
+			project_contacts = requests.get(project_client_contacts_url)
+			uproject_contacts = project_contacts.json()
+
+
+			# project team members
+			team_lead_id = uproject['data']['team_lead_id']
+			team_ids = uproject['data']['team_ids']
+
+			project_team_members_url = baseURL+''.join(f'contacts/project/team/{team_lead_id}/members/{team_ids}')
+			project_team = requests.get(project_team_members_url)
+			uproject_team = project_team.json()
+
+			details = {
+				"contacts": uproject_contacts,
+				"team_members": uproject_team
+			}
+
+
+	except:
+
+		uproject, details = None, None
+		flash('Error connecting to API server', 'danger')
+
+
+	return render_template('project/project_details.html', project=uproject, details=details, menu=menu, submenu='pr')
 
 
 @project.get('/soassales/project/user/actionable')
@@ -176,6 +217,11 @@ def project_actionable():
 def project_actionable_info(id):
 	return render_template('project/project_actionable_info.html', menu=menu, submenu='ac')
 
+
+@project.add_app_template_filter
+def convert_date_time(date):
+	new = datetime.today().strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d %H:%M:%S")
+	return new
 
 
 @project.add_app_template_filter
@@ -191,7 +237,7 @@ def get_client_info(client_id):
 @project.add_app_template_filter
 def get_client_project_contacts(client_id, contact_list):
 	try:
-		url = baseURL+''.join(f'contacts/client/{client_id}/project/contacts/{contact_list}')
+		url = baseURL+''.join(f'contacts/project/{client_id}/contacts/{contact_list}')
 		details = requests.get(url)
 		return details.json()
 	except:

@@ -25,6 +25,7 @@ def dashboard():
 def profile():
 	return render_template('users/profile.html', menu='profile')
 
+
 @user.get('/soassales/users/profile/details/notification')
 def profile_notification():
-	return render_template('users/profile_notification.html', menu='profile') 
+	return render_template('users/profile_notification.html', menu='profile')

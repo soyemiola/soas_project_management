@@ -8,7 +8,7 @@ member = Blueprint('member', __name__, url_prefix='/', template_folder='template
 
 menu = 'team'
 
-@member.get('/soassales/member-list')
+@member.get('/soasproject/member-list')
 def member_list():
 	try:
 		url = baseURL+''.join('users') 
@@ -25,7 +25,7 @@ def member_list():
 	return render_template('members/member-list.html', users=det, menu=menu, submenu="ml")
 
 
-@member.get('/soassales/member-list/new-record')
+@member.get('/soasproject/member-list/new-record')
 def member_new_record():
 	try:
 		url = baseURL+''.join('roles')
@@ -43,7 +43,7 @@ def member_new_record():
 	return render_template('members/member_new_record.html', roles=det, menu=menu, submenu="ml")
 
 
-@member.post('/soassales/member-list/new-record')
+@member.post('/soasproject/member-list/new-record')
 def member_new_record_save():
 	if request.method == 'POST':
 		current_userid = 1
@@ -76,7 +76,7 @@ def member_new_record_save():
 
 
 
-@member.get('/soassales/member/<int:id>/member-edit')
+@member.get('/soasproject/member/<int:id>/member-edit')
 def member_edit(id):
 	url = baseURL+''.join(f'users/one/{ id }')
 	res = requests.get(url)
@@ -97,7 +97,7 @@ def member_edit(id):
 
 
 
-@member.post('/soassales/member-update')
+@member.post('/soasproject/member-update')
 def member_update():
 	if request.method == 'POST':
 		try:
@@ -135,7 +135,7 @@ def member_update():
 
 
 
-@member.post('/soassales/member/member-delete')
+@member.post('/soasproject/member/member-delete')
 def member_delete():
 	if request.method == 'POST':
 		user_id = request.form['user_id']
@@ -154,7 +154,7 @@ def member_delete():
 
 
 
-@member.get('/soassales/member/member-role-list')
+@member.get('/soasproject/member/member-role-list')
 def member_role_list():
 	try:
 		url = baseURL+''.join('roles')
@@ -170,12 +170,12 @@ def member_role_list():
 	return render_template('members/member_role_list.html', roles=det, menu=menu, submenu="mr")
 
 
-@member.get('/soassales/member/member-role-add')
+@member.get('/soasproject/member/member-role-add')
 def add_member_role():
 	return render_template('members/add_member_role.html', menu=menu, submenu="mr")
 
 
-@member.post('/soassales/member-role-save')
+@member.post('/soasproject/member-role-save')
 def save_member_role():
 	if request.method == 'POST':
 		user_id = 1
@@ -203,7 +203,7 @@ def save_member_role():
 		return redirect(url_for("member.member_role_list"))
 
 
-@member.get('/soassales/member/<int:id>/member-role-update')
+@member.get('/soasproject/member/<int:id>/member-role-update')
 def edit_member_role(id):
 	url = baseURL+''.join(f"roles/one/{id}")
 	
@@ -217,7 +217,7 @@ def edit_member_role(id):
 
 	return render_template('members/edit_member_role.html', det=det, menu=menu, submenu="mr")
 
-@member.post('/soassales/member/member-role-update')
+@member.post('/soasproject/member/member-role-update')
 def member_role_update():
 	if request.method == 'POST':
 		user_id = 1
@@ -246,7 +246,7 @@ def member_role_update():
 			return redirect(url_for("member.edit_member_role", id=role_id))
 
 
-@member.post('/soassales/member/member-role-delete')
+@member.post('/soasproject/member/member-role-delete')
 def member_role_delete():
 	if request.method == 'POST':
 		role_id = request.form['role_id']
@@ -261,3 +261,22 @@ def member_role_delete():
 			flash(det['msg'], 'danger')
 	
 	return redirect(url_for('member.member_role_list'))
+
+
+
+@member.get('/soasproject/member/user/<userid>/profile')
+def member_profile(userid):
+	try:
+		url = baseURL+''.join(f'users/one/{ userid }')
+		res = requests.get(url)
+		det = res.json()
+
+		if res.status_code != 200:
+			flash(det['msg'], 'danger')
+			det = None
+
+	except Exception as e:
+		det = None
+		flash(e, 'danger')
+
+	return render_template('members/member_profile.html', det=det, menu=menu, submenu="ml")
