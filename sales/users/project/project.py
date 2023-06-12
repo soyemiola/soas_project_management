@@ -199,13 +199,58 @@ def project_details(id):
 			}
 
 
+			# project items
+			item_url = baseURL+''.join(f'project/item/{id}/get-item')
+			items = requests.get(item_url)
+			uitems = items.json()
+
+			print(uproject)
+			print(uitems)
+
 	except:
+		uproject, details, uitems = None, None, None
 
-		uproject, details = None, None
-		flash('Error connecting to API server', 'danger')
+		flash('Error fetching record', 'danger')
+		return redirect(url_for('project.project_list'))
+
+	return render_template('project/project_details.html', project=uproject, details=details, uitems=uitems, menu=menu, submenu='pr')
 
 
-	return render_template('project/project_details.html', project=uproject, details=details, menu=menu, submenu='pr')
+@project.post('/soassales/project/add-item')
+def project_add_item():
+	if request.method == 'POST':
+		project_id = request.form['project_id']
+		try:
+			current_user = 1
+			data = {
+				"userid": current_user,
+				"project_id": project_id,
+				"subject": request.form['subject'],
+				"description": request.form['description'],
+				"note": request.form.get('note'),
+				"postdate": datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
+				"actionables_id": request.form.getlist('actionables_id'),
+				"actionables_task": request.form.getlist('actionables_task'),
+				"deliverables": request.form.getlist('deliverables')
+			}
+
+			#file = request.files['note_file']
+
+			add_item_url = baseURL+''.join('projects/item/project')
+			save_item = requests.post(add_item_url, json=data)
+
+			det = save_item.json()
+
+			if save_item.status_code != 200:
+				flash(det['msg'], 'danger')
+			else:
+				flash("New item added", "primary")
+
+		except Exception as e:
+			flash(e, 'danger')
+
+		return redirect(url_for('project.project_details', id=project_id))
+
 
 
 @project.get('/soassales/project/user/actionable')
@@ -216,6 +261,9 @@ def project_actionable():
 @project.get('/soassales/project/user/project/<int:id>/actionable/details')
 def project_actionable_info(id):
 	return render_template('project/project_actionable_info.html', menu=menu, submenu='ac')
+
+
+
 
 
 @project.add_app_template_filter

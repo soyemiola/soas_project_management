@@ -4,6 +4,7 @@
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project /</span> {{ project.data.project_name }}</h4>
+    {{ uitems }}
     <div class="card">
       <div class="card-body">
         <div class="row">
@@ -337,8 +338,8 @@
                       `+username+` <i class="bx bx-minus p-0" onclick="removeTask(`+close_id+`)"></i>
                     </small>
                   </a>
-                <input type="hidden" name="task_name" value="`+task+`">
-                <input type="hidden" name="task_user" value="`+userid+`">
+                <input type="hidden" name="actionables_id" value="`+userid+`">
+                <input type="hidden" name="actionables_task" value="`+task+`">
                 </div>
               </div>`;
       $('#actionables_users').append(item);
@@ -368,7 +369,7 @@
                     <i class="bx bx-minus p-0" style="float: right" onclick="removedev(`+close_id+`)"></i>
                   </a>
                 </div>
-                <input type="hidden" name="task_name" value="`+dev+`">
+                <input type="hidden" name="deliverables" value="`+dev+`">
                 </div>
               </div>`;
       
@@ -390,7 +391,7 @@
       comment.classList.remove('show')
     }
   }
-  
+
   const close_view = (id)=>{
     view = document.getElementById(id)
     if (view.classList.contains('show')) {
@@ -441,7 +442,8 @@
 {% block modals %}
 <div class="modal fade" id="addprojectelement" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
   <div class="modal-dialog modal-xl">
-    <form class="modal-content">
+    <form class="modal-content" method="post" action="{{ url_for('project.project_add_item') }}" enctype="multipart/form-data">
+      <input type="hidden" name="project_id" value="{{ project.data.id }}">
       <div class="modal-header">
         <h5 class="modal-title" id="backDropModalTitle">{{ project.data.project_name }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -458,17 +460,17 @@
             <div class="row">
               <div class="col mb-0">
                 <label for="descBackdrop" class="form-label">Description</label>
-                <textarea class="form-control" id="descBackdrop" name="desc" rows="2" placeholder="Enter description"></textarea>
+                <textarea class="form-control" id="descBackdrop" name="description" rows="2" placeholder="Enter description"></textarea>
               </div>
             </div>
             <div class="row">
               <div class="col mb-0">
-                <label for="minBackdrop" class="form-label">Minutes Note</label>
-                <textarea class="form-control" id="minBackdrop" name="minutes" rows="5" placeholder="Enter minutes"></textarea>
+                <label for="minBackdrop" class="form-label">Note</label>
+                <textarea class="form-control" id="minBackdrop" name="note" rows="5" placeholder="Enter note"></textarea>
                 <div class="divider text-start">
                   <div class="divider-text">or upload document</div>
                 </div>
-                <input class="form-control" type="file" id="formFile">
+                <input class="form-control" type="file" id="formFile" name="note_file">
                 <small>Allowed files: .pdf, .docx</small>
               </div>
             </div>
@@ -477,7 +479,7 @@
             <div class="row g-2">
               <div class="col">
                 <label for="actionables" class="form-label">Actionables</label>
-                <input type="text" id="actionables" name="actionables" class="form-control">
+                <input type="text" id="actionables" class="form-control">
               </div>
               <div class="col">
                 <label for="asnBackdrop" class="form-label">Actionables</label>
@@ -490,7 +492,7 @@
                       {% endfor %}
                     {% endif %}
                   </select>
-                  <label class="input-group-text" for="a_team_list" onclick="addTask('actionables','a_team_list')">Add</label>
+                  <label class="input-group-text btn-outline-primary" for="a_team_list" onclick="addTask('actionables','a_team_list')">Add</label>
                 </div>
               </div>
             </div>
@@ -520,7 +522,7 @@
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
         Close
         </button>
-        <button type="button" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary">Save</button>
       </div>
     </form>
   </div>
