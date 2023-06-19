@@ -5,25 +5,51 @@
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project / Actionable / Task /</span> details</h4>
     
+    
     <div class="card">
-      <div class="card-header">Kalakuta project</div>
       <div class="card-body">        
         <div class="row g-2">
-            <div class="col-md-8 offset-md-1">
-              <small class="text-muted">TASK DETAILS</small>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna aliqua.</p>
-              <button class="btn btn-outline-primary btn-sm" onclick="addfeedback()"><i class="bx bx-plus"></i> add feedback</button>
-              <button class="btn btn-outline-primary btn-sm" onclick="feedbackstatus()"><i class="bx bx-check-square"></i> update status</button>
+          {% if task_det %}
+            <div class="col-lg-8">
+              <div class="card">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                  <h5 class="card-title m-0 me-2">{{ task_det.data.info.project_name }}</h5>
+                </div>
+                <div class="card-body">
+                  <small class="text-muted">TASK DETAILS</small>
+              <p>{{task_det.data.info.task}}</p>
+              <p>
+                {% if task_det.data.info.updatedby %}
+                <small>
+                  <i>Last updated by: 
+                    {% if task_det.data.info.updatedby == current_user.id %}
+
+                    <b>You</b> 
+
+                    {% else %}
+
+                      {% set user_info = task_det.data.info.updatedby | get_user_profile %}
+                      <b>{{ user_info.data.fullname }}</b>
+
+                    {% endif %}
+
+                  on <span>{{task_det.data.info.updatedate}}</span></i>
+                </small>
+                  {% endif %}
+              </p>
+              <button class="btn btn-primary btn-sm" onclick="addfeedback()"><i class="bx bx-plus"></i> add feedback</button>
+              <button class="btn btn-primary btn-sm" onclick="feedbackstatus()"><i class="bx bx-check-square"></i> update status</button>
 
               <div id="addfeedbackbx" style="display: none">
                 <div class="divider divider-light">
                   <div class="divider-text">Add feedback</div>
                 </div>
-                <form method="post">
+                <form method="post" action="{{ url_for('project.task_feedback', taskid=pr[0], project_item_id=pr[1]) }}">
+                  <input type="hidden" name="project_item_id" value="{{ task_det.data.info.project_item_id }}">
+                  <input type="hidden" name="actionable_id" value="{{ task_det.data.info.actionable_id }}">
                   <div class="form-group">
                     <label>Feedback</label>
-                    <textarea class="form-control"></textarea>
+                    <textarea class="form-control" name="feedback" required></textarea>
                   </div>
                   <div class="form-group mt-1">
                     <button class="btn btn-primary btn-sm">Submit</button>
@@ -36,12 +62,30 @@
                 <div class="divider divider-light">
                   <div class="divider-text">Actionable Status</div>
                 </div>
-                <form method="post">
+                <form method="post" action="{{ url_for('project.task_status_update', taskid=pr[0], project_item_id=pr[1]) }}">
+                  <input type="hidden" name="project_item_id" value="{{ task_det.data.info.project_item_id }}">
+                  <input type="hidden" name="actionable_id" value="{{ task_det.data.info.actionable_id }}">
                   <div class="form-group">
-                    <label>Feedback</label>
+                    <label>Status</label>
                     <select class="form-select" name="status">
-                      <option>pending</option>
+                      {% if task_det.data.info.status | lower == 'assigned' %}
+                        {% set aSel = 'selected' %}
+                      {% elif task_det.data.info.status | lower == 'in-progress' %}
+                        {% set iSel = 'selected' %}
+                      {% elif task_det.data.info.status | lower == 'completed' %}
+                        {% set cSel = 'selected' %}
+                      {% elif task_det.data.info.status | lower == 'unfinished' %}
+                        {% set uSel = 'selected' %}
+                      {% endif %}
+                      <option {{ aSel }} disabled value="assigned">Assigned</option>
+                      <option {{ iSel }} value="in-progress">In-progress</option>
+                      <option {{ cSel}} value="completed">Completed</option>
+                      <option {{ uSel }} value="unfinished">Unfinished</option>
                     </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Comment</label>
+                    <textarea class="form-control form-text" name="comment"></textarea>
                   </div>
                   <div class="form-group mt-1">
                     <button class="btn btn-primary btn-sm">Update</button>
@@ -50,42 +94,90 @@
                 </form>
               </div>
 
-
+              {% if task_det.data.feedback and task_det.data.feedback | length > 0 %}
               <div class="divider divider-primary">
                 <div class="divider-text">feedback history</div>
               </div>
 
-
               <ul class="p-0 m-0">
-                {% for x in range(3) %}
-                <li class="d-flex mb-4 pb-1">
-                  <div class="avatar flex-shrink-0 me-3">
-                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
-                  </div>
-                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 p-2 border border-light">
-                    <div class="me-2">
-                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
-                        <small class="mt-1" style="float: right; font-weight: bold;"> 03/06/2023 10:54:23</small>
-                      </small>
+                {% for x in task_det.data.feedback %}
+                  {% if x.feedback_user_id == current_user.id %}
+                  <li class="d-flex mb-4 pb-1">
+                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between p-2 border border-light">
+                      <div class="me-2">
+                        <p class="text-muted d-block mb-1">{{ x.feedback_comment }} </p>
+                        <small class="mt-1"> {{ x.postdatetime }} | {{ x.postdatetime | last_comment_time2 }} ago</small>
+                      </div>
                     </div>
-                  </div>
-                </li>
+                    <div class="avatar flex-shrink-0 me-3 ml-5" style="margin-left: 20px;">
+                      <img src="{{ url_for('static', filename='assets/img/avatars/'+x.img) }}" alt="User" class="rounded" />
+                    </div>
+                  </li>
+                  {% else %}
+                  <li class="d-flex mb-4 pb-1">
+                    <div class="avatar flex-shrink-0 me-3">
+                      <img src="{{ url_for('static', filename='assets/img/avatars/'+x.img) }}" alt="User" class="rounded" />
+                    </div>
+                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 p-2 border border-light">
+                      <div class="me-2">
+                        <p class="text-muted d-block mb-1">{{ x.feedback_comment }}</p>
+                        <small class="mt-1">{{ x.postdatetime }} | {{ x.postdatetime | last_comment_time2 }} ago</small>
+                      </div>
+                    </div>
+                  </li>
+
+                  {% endif %}
                 {% endfor %}
-                <li class="d-flex mb-4 pb-1">
-                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between p-2 border border-light">
-                    <div class="me-2">
-                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</small>
-                    </div>
-                  </div>
-                  <div class="avatar flex-shrink-0 me-3 ml-5" style="margin-left: 20px;">
-                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
-                  </div>
-                </li>
+                
               </ul>
+              {% endif %}
+                </div>
+              </div>
 
             </div>
+          {% else %}
+          <div class="alert alert-primary">
+            <strong>Error fetching task record!</strong> <a href="{{ url_for('project.project_actionable_info', taskid=pr[0], project_item_id=pr[1]) }}">Refresh now!</a>
+          </div>
+          {% endif %}
+
+          {% if pend_list and pend_list.data | length > 0 %}
+            <div class="col-lg-4">
+              <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                      <h5 class="card-title m-0 me-2">Project Assign Task</h5>
+                    </div>
+                    <div class="card-body">
+                      <ul class="p-0 m-0">
+                        {% for x in pend_list.data %}
+                          {% if x.status | lower == 'overdue' %}
+                            {% set ac = 'warning' %}
+                          {% elif x.status | lower == 'assigned' %}
+                            {% set ac = 'secondary' %}
+                          {% elif x.status | lower == 'in-progress' %}
+                            {% set ac = 'primary' %}
+                          
+                          {% endif %}
+
+                        <a href="{{ url_for('project.project_actionable_info', taskid=x.actionable_id, project_item_id=pr[1]) }}" style="width: 100%">
+                        <li class="d-flex mb-4 pb-1">
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="me-2">
+                              <small class="text-muted d-block mb-1">{{ x.project_name }}</small>
+                              <h6 class="mb-0">{{ x.actionable_task | truncate(50) }}</h6>
+                            </div>
+                            <div class="user-progress d-flex align-items-center gap-1">
+                              <span class="badge bg-label-{{ac}}">{{x.status}}</span>
+                            </div>
+                          </div>
+                        </li>
+                        </a>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+            </div>
+          {% endif %}
           </div>
       </div>
     </div>

@@ -39,7 +39,7 @@
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
                 <li class="nav-item lh-1 me-3">
-                  <a>Soyemi Olanrewaju</a>
+                  <a>{{ current_user.fullname }}</a>
                 </li>
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -58,8 +58,13 @@
                             </div>
                           </div>
                           <div class="flex-grow-1">
-                            <span class="fw-semibold d-block">Soyemi Olanrewaju</span>
-                            <small class="text-muted">Admin</small>
+                            <span class="fw-semibold d-block">{{ current_user.fullname }}</span>
+                            {% if current_user.role == 1 %}
+                              {% set role = 'Admin' %}
+                            {% else %}
+                              {% set role = 'User' %}
+                            {% endif %}
+                            <small class="text-muted">{{ role }}</small>
                           </div>
                         </div>
                       </a>
@@ -68,7 +73,7 @@
                       <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="#">
+                      <a class="dropdown-item" href="{{ url_for('user.profile') }}">
                         <i class="bx bx-user me-2"></i>
                         <span class="align-middle">My Profile</span>
                       </a>
@@ -151,7 +156,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
-          <a href="#" class="btn btn-primary">Yes</a>
+          <a href="{{ url_for('user.auth_logout') }}" class="btn btn-primary">Yes</a>
         </div>
       </div>
     </div>

@@ -2,12 +2,18 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 import requests
 from sales import baseURL
 from sales import countries
+from flask_login import current_user
 
 
 client = Blueprint('client', __name__, url_prefix='/', template_folder='templates')
 
 menu = 'company'
 
+
+@client.before_request
+def chk_session():
+    if not current_user.is_authenticated:
+        return redirect(url_for('user.auth_login', next=request.url))
 
 
 @client.get('/soassales/client-list')
@@ -40,7 +46,7 @@ def client_add():
 @client.post('/soassales/client/client-save')
 def save_client_record():
 	if request.method == 'POST':
-		createdby = 1 # current_user_id
+		
 		try:
 			data = {
 				'clientname': request.form['clientname'],
@@ -50,7 +56,7 @@ def save_client_record():
 				'email': request.form['email'],
 				'number': request.form['number'],
 				'industry': request.form['industry'],
-				'createdby': createdby,
+				'createdby': current_user.id,
 				'contact': request.form.getlist('crdt_contact')
 			}
 
@@ -169,7 +175,7 @@ def client_contact_add():
 def save_client_contact_record():
 	if request.method == 'POST':
 		try:
-			current_user = 1
+			current_user = current_user.id
 			data = {
 				"company": request.form['company'],
 				"name": request.form['name'],
@@ -291,7 +297,7 @@ def add_scout():
 @client.post('/soassales/client/scouting/save-record')
 def save_add_scout():
 	if request.method == 'POST':
-		current_user = 1
+		
 		try:
 			data = {
 				"name": request.form['name'],
@@ -299,7 +305,7 @@ def save_add_scout():
 				"industry": request.form['industry'],
 				"country": request.form['country'],
 				"address": request.form.get('address'),
-				"createdby": current_user
+				"createdby": current_user.id
 			}
 
 			url = baseURL+''.join('scouts/add')
@@ -321,7 +327,7 @@ def save_add_scout():
 @client.post('/soassales/client/scouting/update-record')
 def update_scout():
 	if request.method == 'POST':
-		current_user = 1
+		
 		try:
 			data = {
 				"id": request.form['id'],

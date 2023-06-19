@@ -4,7 +4,7 @@
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project /</span> {{ project.data.project_name }}</h4>
-    {{ uitems }}
+
     <div class="card">
       <div class="card-body">
         <div class="row">
@@ -58,7 +58,7 @@
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-                              <img src="{{ url_for('static', filename='assets/img/avatars/1.png') }}" alt="" class="w-px-40 h-auto rounded-circle">
+                              <img src="{{ url_for('static', filename='assets/img/avatars/'+cp[0].img) }}" alt="img" class="w-px-40 h-auto rounded-circle">
                             </div>
                           </div>
                           <div class="flex-grow-1">
@@ -89,9 +89,10 @@
           <div class="col-md-9" id="details">
             <div class="card overflow-hidden mb-4" style="height: 700px;">
               <div class="card-header">
-              <h5 class="">
-                Project progress <a href="{{ url_for('project.project_list') }}" class="btn btn-primary btn-sm" style="float: right;"><i class="bx bx-arrow-back"></i> Back</a>
-              </h5>
+                <h5 class="">
+                  Project progress 
+                  <a href="{{ url_for('project.project_list') }}" class="btn btn-primary btn-sm" style="float: right;"><i class="bx bx-arrow-back"></i> Back to list </a>
+                </h5>
                 <div class="progress mt-3 mb-3">
                   {% if project.data.status | lower == 'pending' %}
                   <div class="progress-bar bg-primary progress-bar-striped shadow-none" role="progressbar" style="width: 10%" >{{ project.data.status }}</div>
@@ -149,33 +150,61 @@
                 <div class="divider divider-primary">
                   <div class="divider-text">Project report</div>
                 </div>
-                {% for i in range(10) %}
+
+                {% if uitems %}
+                  {% for i in range(uitems.data['items'] | length ) %}
+                    {% set cnt = loop.index - 1 %}
+                  
+                  {% set item_comments = uitems.data['items'][cnt]['id'] | project_comment_list %}
+                
                 <div class="card mb-2">
                   <div class="card-body">
-                    <h5 class="card-title">Reporting subject</h5>
+                    <h5 class="card-title">{{uitems.data['items'][cnt]['subject']}}</h5>
                     <p class="card-text">
-                      With supporting text below as a natural lead-in to additional content natural lead-in to
-                      additional content.
+                      {{uitems.data['items'][cnt]['description']}}
                     </p>
                     <p class="card-text">
-                    <small class="text-muted">Created by: Soyemi Olanrewaju | datetime: 13th May, 2023 10:30:45am</small> <br>
+                    <small class="text-muted">
+                      {% set user_prof = uitems.data['items'][cnt]['post_by'] | get_user_profile %}
+
+                      Created by: 
+                      {% if not user_prof %}
+                        <span><i>error fetching record!</i></span>
+                      {% else %}
+                        {{ user_prof.data.fullname }}
+                      {% endif %}
+                      
+                      | post date: {{ uitems.data['items'][cnt]['post_date_time'] | convert_date_time }}
+                      
+                    </small> 
+                    <br>
+
+                    {% set user_comment = uitems.data['items'][cnt]['id'] | user_comment_img %}
+
+                    {% if user_comment %}
                     <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
-                      <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="Lilian Fuller">
-                        <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle">
+                      {% for cm in user_comment %}
+                      <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="{{ cm.name }}">
+                        <img src=" {{ url_for('static', filename='assets/img/avatars/'+cm.img) }}" alt="user avatar" class="rounded-circle">
                       </li>
-                      <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="Sophia Wilkerson">
-                        <img src="{{ url_for('static', filename='assets/img/avatars/6.png') }}" alt="Avatar" class="rounded-circle">
-                      </li>
-                      <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="" data-bs-original-title="Christina Parker">
-                        <img src="{{ url_for('static', filename='assets/img/avatars/7.png') }}" alt="Avatar" class="rounded-circle">
-                      </li>
+                      {% endfor %}
                     </ul>
-                    <small class="text-muted">Comment: <span>4</span></small> <br>
-                    <small class="text-muted">Last updated 3 mins ago</small>
+                    {% endif %}
+                    <small class="text-muted">Comment: <span>{{ item_comments.data | length }}</span></small> <br>
+                    
+                    <!-- comment last updated time -->
+                    {% if item_comments and item_comments.data | length > 0 %}
+                    
+                      {% set last_comment_time = item_comments.data[0]['postdatetime'] | last_comment_time %}
+                      <small class="text-muted">Last updated {{ last_comment_time }} ago</small>
+                    {% endif %}
+                    <!-- // end last updated time -->
+
                     <p class="mt-2">
                       <small class="badge bg-label-primary mr-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#vw_{{ loop.index }}" aria-expanded="false" aria-controls="vw_{{ loop.index }}" onclick="close_comment('cm_{{ loop.index }}')">view</small>
                       <small class="badge bg-label-primary mr-2 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cm_{{ loop.index }}" aria-expanded="false" aria-controls="cm_{{ loop.index }}" onclick="close_view('vw_{{ loop.index }}')">add comment</small>
                     </p>
+
                     <!-- view details -->
                     <div class="collapse" id="vw_{{ loop.index }}">
                       <div class="d-grid d-sm-flex p-1 border">
@@ -198,56 +227,81 @@
                             </li>
                           </ul>
                           <div class="tab-content">
+                            <!-- Item note -->
                             <div class="tab-pane fade active show" id="navs-pills-top-pod_{{loop.index}}" role="tabpanel">
-                              {% set vl = 'Icing pastry pudding oat cake. Lemon drops cotton candy caramels cake caramels sesame snaps powder. Bear claw candy topping.' %}
-                              <p id="note_id_{{loop.index}}" data-minutes="{{ vl }}" data-details_id="{{loop.index}}">
-                                {{ vl }}
+                              <p id="note_id_{{loop.index}}" data-minutes="" data-details_id="{{loop.index}}">
+                                {{uitems.data['items'][cnt]['note']}}
                               </p>
                             </div>
+                            <!-- end note -->
+
+                            <!-- Actionables -->
                             <div class="tab-pane fade" id="navs-pills-top-actn_{{loop.index}}" role="tabpanel">
                               <div class="list-group">
-                                  <label class="list-group-item">
-                                    <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle" height="25px" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="soyemi olanrewaju">
-                                    
-                                    <input class="form-check-input me-1" type="checkbox" checked disabled>
-                                    With supporting text below 
+                                {% if uitems.data['actionables'] | length > 0 %}
+                                  {% for x in uitems.data['actionables'] %}
+                                    {% if x.project_item_id == uitems.data['items'][cnt]['id'] %}
+                                      <label class="list-group-item">
+                                        {% set user_actionable = x.user_id | get_user_profile %}
 
-                                    <span style="float: right;">
-                                      <small  class="badge badge-sm bg-label-success">done</small>
-                                      <i class="bx bx-edit" style="cursor:pointer;" onclick="opentask('id')"></i>                                     
-                                    </span>
+                                        <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle" height="25px" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="{{ user_actionable.data.fullname }}">
+                                        {% if x.status | lower != 'done' %}
+                                        <input class="form-check-input me-1" type="checkbox" disabled>
+                                        {% else %}
+                                        <input class="form-check-input me-1" type="checkbox" checked disabled>
+                                        {% endif %}
 
-                                  </label>
-                                  <label class="list-group-item">
-                                    <img src=" {{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="Avatar" class="rounded-circle" height="25px" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="Raheed Bello">
+                                        {{ x.task }}
 
-                                    <input class="form-check-input me-1" type="checkbox" disabled>
-                                    additional content natural lead-in 
+                                        <span style="float: right;">
+                                          {% if x.status | lower == 'completed' %}
+                                            {% set color = 'success' %}
+                                            {% set label = x.status %}
+                                          {% elif x.status | lower == 'in-progress' %}
+                                            {% set color = 'primary' %}
+                                            {% set label = x.status %}
+                                          {% elif x.status | lower == 'assigned' %}
+                                            {% set color = 'secondary' %}
+                                            {% set label = x.status %}
+                                          {% endif %}
+                                          <small  class="badge badge-sm bg-label-{{ color }}">{{ label }}</small>
+                                          <i class="bx bx-edit" style="cursor:pointer;" onclick="opentask('{{x.id}}', '{{x.project_item_id}}', '{{ user_actionable.data.fullname }}', '{{ x.task }}')"></i>                                     
+                                        </span>
 
-
-                                    <span style="float: right;">
-                                      <small  class="badge badge-sm bg-label-primary">pending</small>
-                                      <i class="bx bx-edit" style="cursor:pointer;"></i>                                     
-                                    </span>
-                                  </label>
+                                      </label>
+                                    {% endif %}
+                                  {% endfor %}
+                                {% endif %}
                                 </div>
                               
                             </div>
+                            <!-- end actionables -->
+
+                            <!-- Deliverables -->
                             <div class="tab-pane fade" id="navs-pills-top-dvrb_{{loop.index}}" role="tabpanel">
                               <div class="list-group">
-                                  <label class="list-group-item">
-                                    With supporting text below 
-                                  </label>
-                                  <label class="list-group-item">
-                                    additional content natural lead-in 
-                                  </label>
+                                {% if uitems.data['deliverables'] | length > 0 %}
+                                  {% for x in uitems.data['deliverables'] %}
+                                    {% if x.project_item_id == uitems.data['items'][cnt]['id'] %}
+                                      {% for dlv in x['items'] %}
+                                      <label class="list-group-item">
+                                        {{ dlv }}
+                                      </label>
+                                      {% endfor %}
+                                    {% endif %}
+                                  {% endfor %}
+                                {% endif %}
                                 </div>
-                              
                             </div>
+                            <!-- end deliverables -->
                           </div>
                           <p class="mb-0 p-3 pb-0">
-                                <i class="bx bx-edit" style="cursor: pointer;" onclick="edit_minute_item()"></i> 
-                              </p>
+                            <div id="item_details_info_{{ loop.index }}" style="display: none;" data-item_id="{{uitems.data['items'][cnt]['id']}}" data-subject="{{uitems.data['items'][cnt]['subject']}}" data-description="{{uitems.data['items'][cnt]['description']}}" data-note="{{uitems.data['items'][cnt]['note']}}" data-note_file="{{uitems.data['items'][cnt]['note_docx']}}" data-actionables="{{uitems.data['actionables']}}" data-deliverables="{{ uitems.data['deliverables'] }}"></div>
+                            
+                            <button class="btn btn-outline-primary btn-sm" onclick="edit_minute_item('item_details_info_{{ loop.index }}')">
+                              <i class="bx bx-edit"></i> edit
+                            </button> 
+                          </p>
                         </div>
                         <button class="btn btn-danger btn-sm" onclick="delete_report('minutes_id')">
                           <i class="bx bx-trash"></i> Delete
@@ -259,43 +313,48 @@
                     <!-- add comment -->
                     <div class="collapse" id="cm_{{ loop.index }}">
                       <div class=" p-3 border">
-                        <form class="">
+                        <form id="project_comment" method="post" action="{{ url_for('project.project_item_comment', project_id=project.data.id) }}">
+                          <input type="hidden" name="project_item_id" value="{{ uitems.data['items'][cnt]['id'] }}">
                           <div class="form-group">
                             <label for="ControlTextarea1" class="form-label">Comment</label>
-                            <textarea class="form-control" id="ControlTextarea1" rows="3" required></textarea>
+                            <textarea class="form-control" name="comment" id="ControlTextarea1" rows="3" required></textarea>
                           </div>
                           <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-sm mt-2">Add comment</button>
+                            <button type="submit" form="project_comment" class="btn btn-primary btn-sm mt-2">Add comment</button>
                           </div>
                         </form>
+                        {% if item_comments.data | length > 0 %}
                         <div class="divider divider-primary">
-                          <div class="divider-text">Other comment</div>
+                          <div class="divider-text">comment history</div>
                         </div>
-                        {% for x in range(4) %}
+                        {% for x in item_comments.data %}
                         <div>
                           <div class="mb-2">
-                            <div class="avatar avatar-online" style="width: 100%; ">
-                              <img src="{{ url_for('static', filename='assets/img/avatars/1.png') }}" alt="" class="w-px-40 h-auto rounded-circle">
-                              <small class="text-muted">13th May, 2023 | 11:47:03am</small>
+                            <div class="avatar avatar-online">
+                              <img src="{{ url_for('static', filename='assets/img/avatars/'+x.img) }}" alt="" class="w-px-40 h-auto rounded-circle">
                             </div>
                           </div>
                           <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            {{ x.comment }}
+                              <br>
+                              {% set cdate = x.postdatetime | convert_date %}
+                              {% if cdate %}
+                              <small class="text-muted"> {{ cdate[0]}} | {{ cdate[1]}} 
+                                <i class="bx bx-edit" onclick="edit_comment()"></i>
+                              </small>
+                              {% endif %}
                           </p>
                         </div>
                         {% endfor %}
+                        {% endif %}
                       </div>
                     </div>
                     <!-- // end comment -->
                     </p>
                   </div>
                 </div>
-                {% endfor %}
+                  {% endfor %}
+                {% endif %}
                 <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
                   <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                 </div>
@@ -316,6 +375,7 @@
 </div>
 {% endblock %}
 {% block scripts %}
+<script src="{{ url_for('static', filename='assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
 <script type="text/javascript">
   const addTask = (task_id, user) =>{
     id = document.getElementById(user)
@@ -399,7 +459,24 @@
     }
   }
 
-  const edit_minute_item = () =>{    
+  const edit_minute_item = (id) =>{
+    var id = document.getElementById(id)
+
+    item_id = id.dataset.item_id;
+    item_subject = id.dataset.subject;
+    item_description = id.dataset.description;
+    item_note = id.dataset.note;
+    item_note_docx = id.dataset.note_file;
+    item_actionables = id.dataset.actionables;
+    item_deliverables = id.dataset.deliverables;
+
+    $('#project_item_id').val(item_id);
+    $('#item_subject').val(item_subject);
+    $('#item_description').val(item_description);
+    $('#item_note').val(item_note);
+    // $('#item_note_file').val(item_note_docx);
+
+
     $('#editmeetingnote').modal('show')
   }
 
@@ -417,7 +494,126 @@
     
   }
 
-  const opentask = ()=>{
+    const covertToSeconds = (dateTimeString)=>{
+    
+    const dateTime = new Date(dateTimeString);
+    const currentTime = Math.round(dateTime.getTime() / 1000);
+    const elapsed = currentTime - Math.round(Date.now() / 1000);
+    return elapsed
+  }
+
+
+  function formatTime(getDate) {
+    const string = getDate;
+    const dateTime = new Date(string);
+    const currentTime = Math.round(dateTime.getTime() / 1000);
+    const elapsed = Math.round(Date.now() / 1000) - currentTime;
+
+    if (elapsed >= 60 * 60 * 24) {
+      
+      const days = Math.floor(elapsed / (60 * 60 * 24));
+      const hours = Math.floor((elapsed % (60 * 60 * 24)) / (60 * 60));
+      const minutes = Math.floor((elapsed % (60 * 60)) / 60);
+      const seconds = elapsed % 60;
+      return `${days} day(s), ${hours} hour(s), ${minutes} minute(s), ${seconds} second(s)`;
+
+    } else if (elapsed >= 60 * 60) {
+     
+     const hours = Math.floor(elapsed / (60 * 60));
+      const minutes = Math.floor((elapsed % (60 * 60)) / 60);
+      return `${hours} hour(s), ${minutes} minute(s)`;
+
+    } else if (elapsed >= 60) {
+      
+      const minutes = Math.floor(elapsed / 60);
+      return `${minutes} minute(s)`;
+
+    } else {
+      
+      return `${elapsed} second(s)`;
+    }
+  }
+
+
+  const opentask = (id, product_item_id, username, task)=>{
+    document.getElementById('assignto').innerHTML = username;
+    document.getElementById('actionable_task').innerHTML = task;
+
+    current_user = parseInt('{{ current_user.id }}');
+    const task_id = id
+
+    $('#feedback_project_item_id').val(product_item_id);
+    $('#feedback_actionable_id').val(id);  
+
+    $.ajax({
+      method: 'get',
+      url: 'http://localhost:5000/api/v1/actionable/project-task/'+product_item_id+'/details/'+task_id,
+
+      beforeSend: function(){
+        $('#feedbackList').empty();
+        // add loading icon feedbackList
+      },
+
+      success: function(result){
+        if(result.data.feedback.length > 0){
+          document.getElementById('feedbackhistory').style.display = 'block';
+
+          for (var i = 0; i < result.data.feedback.length; i++) {
+            const det = result.data.feedback[i];
+
+            const tm = formatTime(det['postdatetime']);
+
+            img = '<img src={{ url_for("static", filename="assets/img/avatars/avatar_img") }} alt="User" class="rounded" />'
+            img = img.replace("avatar_img", det['img'])
+
+            if(det['feedback_user_id'] == current_user){
+              item = `
+                <li class="d-flex mb-4 pb-1">
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between p-2 border border-light">
+                    <div class="me-2">
+                      <p class="text-muted d-block mb-1">`+det['feedback_comment']+` </p>
+                      <small class="mt-1"> `+det['postdatetime']+` | `+tm+` ago</small>
+                    </div>
+                  </div>
+                  <div class="avatar flex-shrink-0 me-3 ml-5" style="margin-left: 20px;">
+                     `+ img +`
+                  </div>
+                </li>
+              `;
+              
+            }else{            
+              
+              item = `
+                <li class="d-flex mb-4 pb-1">
+                  <div class="avatar flex-shrink-0 me-3">
+                    `+ img +`
+                  </div>
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 p-2 border border-light">
+                    <div class="me-2">
+                      <p class="text-muted d-block mb-1">`+det['feedback_comment']+` </p>
+                      <small class="mt-1"> `+det['postdatetime']+` | `+tm+` ago</small>
+                    </div>
+                  </div>
+                </li>
+              `
+            }
+
+            $('#feedbackList').append(item);
+          }
+        }else{
+          document.getElementById('feedbackhistory').style.display = 'none';
+        }
+        
+      },
+
+      complete: function(){
+        // remove loading icon
+      }
+
+    })
+
+    // send forms via ajax request and update list
+
     $('#taskview').modal('show')
   }
 
@@ -425,9 +621,9 @@
     elem = document.getElementById('addfeedbackbx')
 
     if (elem.style.display == 'none') {
-      elem.style.display = 'block';
+      $('#addfeedbackbx').fadeIn();
     }else{
-      elem.style.display = 'none'
+      $('#addfeedbackbx').fadeOut();
     }
   }
 
@@ -435,10 +631,88 @@
     return Math.floor((Math.random() * 10000) + 1 )
   }
 
+  const submitFeedback = async ()=>{
+    const item_id = $('#feedback_project_item_id').val();
+    const task_id = $('#feedback_actionable_id').val();
+    const feedback = $('#feedback_text').val();
+    const postdate = getCurrentDateTime();
+    const current_user_id = parseInt('{{ current_user.id }}');
+    const current_user_img = '{{ current_user.img }}';
+    const tm = formatTime(postdate);
+
+    img = '<img src={{ url_for("static", filename="assets/img/avatars/avatar_img") }} alt="User" class="rounded" />'
+    img = img.replace("avatar_img", current_user_img);
+
+    const item = `
+                <li class="d-flex mb-4 pb-1">
+                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between p-2 border border-light">
+                    <div class="me-2">
+                      <p class="text-muted d-block mb-1">`+feedback+` </p>
+                      <small class="mt-1"> `+postdate+` | `+tm+` ago</small>
+                    </div>
+                  </div>
+                  <div class="avatar flex-shrink-0 me-3 ml-5" style="margin-left: 20px;">
+                     `+ img +`
+                  </div>
+                </li>
+              `;
+
+    if(!feedback || feedback == null){
+      document.getElementById('feedback_text').focus();
+      return 
+    }
+
+    $.ajax({
+      method: 'post',
+      url: 'http://localhost:5000/api/v1/actionable/project-task/add-feedback',
+      data:{project_item_id:item_id, task_id:task_id, userid:current_user_id, feedback:feedback, postdate:postdate},
+      contentType: 'application/json',
+
+      beforeSend: function(){
+        document.getElementById('feedback_text').disabled = true;
+      },
+
+      success: function(res){
+        $('#feedbackList').append(item);
+
+        document.getElementById('feedbackhistory').style.display = 'block';
+      },
+
+      error: function(e){
+        console.log(e);
+      },
+
+      complete: function(){
+        document.getElementById('feedback_text').disabled = false;
+        addfeedback();
+      }
+    });
+
+
+  }
+
+  function getCurrentDateTime() {
+    const now = new Date();
+    
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDateTime;
+  }
+
+
+
+
 
 </script>
-<script src="{{ url_for('static', filename='assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
 {% endblock %}
+
 {% block modals %}
 <div class="modal fade" id="addprojectelement" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
   <div class="modal-dialog modal-xl">
@@ -467,11 +741,11 @@
               <div class="col mb-0">
                 <label for="minBackdrop" class="form-label">Note</label>
                 <textarea class="form-control" id="minBackdrop" name="note" rows="5" placeholder="Enter note"></textarea>
-                <div class="divider text-start">
+                <!-- <div class="divider text-start">
                   <div class="divider-text">or upload document</div>
                 </div>
                 <input class="form-control" type="file" id="formFile" name="note_file">
-                <small>Allowed files: .pdf, .docx</small>
+                <small>Allowed files: .pdf, .docx</small> -->
               </div>
             </div>
           </div>
@@ -529,17 +803,80 @@
 </div>
 
 <div class="modal fade" id="editmeetingnote" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
-  <div class="modal-dialog">
-    <form class="modal-content" method="patch">
+  <div class="modal-dialog modal-xl">
+    <form class="modal-content" method="post" action="{{ url_for('project.project_update_item') }}" enctype="multipart/form-data">
+      <input type="hidden" name="project_item_id" id="project_item_id">
       <div class="modal-header">
-        <h5 class="modal-title" id="backDropModalTitle">Reporting subject</h5>
+        <h5 class="modal-title" id="backDropModalTitle">Update project item</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col mb-3">
-            <label for="edit_minutes" class="form-label" id="edit_minutes_label">Minutes</label>
-            <textarea class="form-control" id="edit_minutes" name="edit_minutes" required></textarea>
+          <div class="col-xs-12 col-md-6">
+            <div class="row">
+              <div class="col mb-3">
+                <label for="item_subject" class="form-label">Subject</label>
+                <input type="text" name="subject" id="item_subject" class="form-control" placeholder="Enter subject">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col mb-0">
+                <label for="item_description" class="form-label">Description</label>
+                <textarea class="form-control" name="description" id="item_description" rows="2" placeholder="Enter description"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col mb-0">
+                <label for="item_note" class="form-label">Note</label>
+                <textarea class="form-control" name="note" id="item_note" rows="5" placeholder="Enter note"></textarea>
+                <!-- <div class="divider text-start">
+                  <div class="divider-text">or upload document</div>
+                </div>
+                <input class="form-control" type="file" id="formFile" name="note_file" id="item_note_file">
+                <small>Allowed files: .pdf, .docx</small> -->
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <div class="row g-2">
+              <div class="col">
+                <label for="actionables" class="form-label">Actionables</label>
+                <input type="text" id="actionables" class="form-control">
+              </div>
+              <div class="col">
+                <label for="asnBackdrop" class="form-label">Actionables</label>
+                <div class="input-group">
+                  <select class="form-select" id="a_team_list">
+                    <option selected disabled value="0">--select team member--</option>
+                    {% if details %}
+                      {% for cp in details.team_members %}
+                      <option value="{{ cp[0].id }}, {{ cp[0].fullname }}" data-name="{{ cp[0].fullname }}">{{ cp[0].fullname }}</option>
+                      {% endfor %}
+                    {% endif %}
+                  </select>
+                  <label class="input-group-text btn-outline-primary" for="a_team_list" onclick="addTask('actionables','a_team_list')">Add</label>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-0 pt-0">
+              <div class="col-md-12" id="actionables_users">
+                
+              </div>
+            </div>
+            <div class="row g-2 mt-2">
+              <div class="col mb-0">
+                <label for="dvlBackdrop" class="form-label">Deliverables</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Deliverables item" aria-label="Deliverables item" aria-describedby="button-addon2" id="deliverable">
+                  <button class="btn btn-outline-primary" type="button" id="button-addon2" onclick="addDev('deliverable')">Add item</button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12" id="deliverables_opt">
+                
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -554,7 +891,7 @@
 </div>
 
 
-<div class="modal fade" id="delete_minutes" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+  <div class="modal fade" id="delete_minutes" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -579,70 +916,45 @@
     <div class="modal-dialog modal-md" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="backDropModalTitle">Kalakuta project</h5>
+          <h5 class="modal-title" id="backDropModalTitle">{{ project.data.project_name }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row g-2">
             <div class="col-md">
               <div class="divider text-end m-0 p-0">
-                <div class="divider-text">Assigned to: <span id="assignto">Soyemi Olanrewaju</span></div>
+                <div class="divider-text">Assigned to: <span id="assignto"></span></div>
               </div>
               <small class="text-muted">TASK DETAILS</small>
 
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna aliqua.</p>
+              <p id="actionable_task"></p>
               <button class="btn btn-outline-primary btn-sm" onclick="addfeedback()"><i class="bx bx-plus"></i> add feedback</button>
 
-              <div id="addfeedbackbx" style="display: none">
+              <div id="addfeedbackbx" style="display: none"> 
                 <div class="divider divider-light">
                   <div class="divider-text">Add feedback</div>
                 </div>
-                <form method="post">
+               <form method="post" id="addfeedback">
+                  <input type="hidden" value="" id="feedback_project_item_id">
+                  <input type="hidden" value="" id="feedback_actionable_id">
                   <div class="form-group">
                     <label>Feedback</label>
-                    <textarea class="form-control"></textarea>
+                    <textarea class="form-control" name="feedback" id="feedback_text" required></textarea>
                   </div>
                   <div class="form-group mt-1">
-                    <button class="btn btn-primary btn-sm">Submit</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="submitFeedback()">Submit</button>
                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addfeedback()">Close</button>
                   </div>
                 </form>
               </div>
 
 
-              <div class="divider divider-primary">
+              <div class="divider divider-primary" id="feedbackhistory" style="display:none;">
                 <div class="divider-text">feedback history</div>
               </div>
 
-
-              <ul class="p-0 m-0">
-                {% for x in range(3) %}
-                <li class="d-flex mb-4 pb-1">
-                  <div class="avatar flex-shrink-0 me-3">
-                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
-                  </div>
-                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 p-2 border border-light">
-                    <div class="me-2">
-                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
-                        <small class="mt-1" style="float: right; font-weight: bold;"> 03/06/2023 10:54:23</small>
-                      </small>
-                    </div>
-                  </div>
-                </li>
-                {% endfor %}
-                <li class="d-flex mb-4 pb-1">
-                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between p-2 border border-light">
-                    <div class="me-2">
-                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</small>
-                    </div>
-                  </div>
-                  <div class="avatar flex-shrink-0 me-3 ml-5" style="margin-left: 20px;">
-                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
-                  </div>
-                </li>
+              <ul class="p-0 m-0" id="feedbackList">
+                
               </ul>
 
             </div>

@@ -1,12 +1,20 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, Response
 from sales import baseURL
 import requests
-
+from flask_login import current_user
 
 
 member = Blueprint('member', __name__, url_prefix='/', template_folder='templates')
 
 menu = 'team'
+
+
+
+@member.before_request
+def chk_session():
+    if not current_user.is_authenticated:
+        return redirect(url_for('user.auth_login', next=request.url))
+
 
 @member.get('/soasproject/member-list')
 def member_list():
@@ -46,7 +54,6 @@ def member_new_record():
 @member.post('/soasproject/member-list/new-record')
 def member_new_record_save():
 	if request.method == 'POST':
-		current_userid = 1
 		try:
 			data = {
 				"fullname": request.form['fullname'],
@@ -55,7 +62,7 @@ def member_new_record_save():
 				"email": request.form['email'],
 				"number": request.form['number'],
 				"role": request.form['role'],
-				"createdby": current_userid
+				"createdby": current_user.id
 			}
 
 			url = baseURL+''.join('users/new')
@@ -178,11 +185,10 @@ def add_member_role():
 @member.post('/soasproject/member-role-save')
 def save_member_role():
 	if request.method == 'POST':
-		user_id = 1
 		try:
 			data = {
 				"role": request.form['role'],
-				"createdby": user_id
+				"createdby": current_user.id
 			}
 
 			url = baseURL+''.join('roles/new')
@@ -220,7 +226,7 @@ def edit_member_role(id):
 @member.post('/soasproject/member/member-role-update')
 def member_role_update():
 	if request.method == 'POST':
-		user_id = 1
+		
 		try:
 			role_id = request.form['id']
 			role = request.form['role']
@@ -280,3 +286,20 @@ def member_profile(userid):
 		flash(e, 'danger')
 
 	return render_template('members/member_profile.html', det=det, menu=menu, submenu="ml")
+
+
+
+@member.add_app_template_filter
+def get_user_profile(userid):
+	try:
+		url = baseURL+''.join(f'users/one/{ userid }')
+		res = requests.get(url)
+		det = res.json()
+
+		if res.status_code != 200:
+			return None
+		
+		return det
+
+	except Exception as e:
+		return None

@@ -4,7 +4,6 @@
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Project / Actionable /</span> Task list</h4>
-    
     <div class="card">
       <div class="card-header"></div>
       <div class="card-body">
@@ -12,36 +11,64 @@
                           <thead>
                             <tr>
                               <th>Project</th>
-                              <th>Task</th>
+                              <th>Task Assign</th>
                               <th>Assign Date</th>
                               <th>Assigned By</th>
                               <th>Status</th>
+                              <!-- <th>Project status</th> -->
                               <th>Actions</th>
                             </tr>
                           </thead>
                           <tbody class="table-border-bottom-0">
-                            <tr>
-                              <td><strong><a href="#">Wear sales</a></strong></td>
-                              <td>Actionable point</td>
-                              <td>12-12-2022</td>
-                              <td>Bolatito Goke</td>
-                              <td><span class="badge bg-label-success">completed</span></td>
-                              <td>
-                                <a href="{{ url_for('project.project_actionable_info', id=1) }}" class="btn btn-primary btn-sm"><i class="bx bx-folder-open"></i></a>
-                                <small><i class="bx bx-comment-dots"></i> 2</small>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td><strong><a href="#">Wear sales</a></strong></td>
-                              <td>Actionable point</td>
-                              <td>12-12-2022</td>
-                              <td>Kelvin Smith</td>
-                              <td><span class="badge bg-label-primary">pending</span></td>
-                              <td>
-                                <a href="{{ url_for('project.project_actionable_info', id=1) }}" class="btn btn-primary btn-sm"><i class="bx bx-folder-open"></i></a>
-                                <small><i class="bx bx-comment-dots"></i> 2</small>
-                              </td>
-                            </tr>
+                            {% if det %}
+                              {% for x in det.data %}
+                              <tr>
+                                <td><strong><a href="{{ url_for('project.project_details', id=x.id) }}">{{ x.project_name }}</a></strong></td>
+                                <td>{{ x.actionable_task }}</td>
+                                <td>{{ x.assign_date | convert_date_time }}</td>
+                                <td>
+                                  {% set assnby = x.assign_by | get_user_profile %}
+                                  {{ assnby.data.fullname }}
+                                </td>
+                                <td>
+                                  {% if x.status | lower == 'assigned' %}
+                                    {% set color = 'secondary' %}
+                                  {% elif x.status | lower == 'completed' %}
+                                    {% set color = 'success' %}
+                                  {% elif x.status | lower == 'in-progress' %}
+                                    {% set color = 'primary' %}
+                                  {% elif x.status | lower == 'unfinished' %}
+                                    {% set color = 'danger' %}
+                                  {% elif x.status | lower == 'overdue' %}
+                                    {% set color = 'warning' %}
+                                  {% endif %}
+                                  <span class="badge bg-label-{{ color }}">{{ x.status}}</span>
+                                  
+                                </td>
+                                <!-- <td>
+                                  {% if x.project_status | lower == 'ongoing' %}
+                                    {% set color = 'primary' %}
+                                  {% elif x.project_status | lower == 'completed' %}
+                                    {% set color = 'success' %}
+                                  {% elif x.project_status | lower == 'pending' %}
+                                    {% set color = 'secondary' %}
+                                  {% elif x.project_status | lower == 'terminated' %}
+                                    {% set color = 'danger' %}
+                                  {% endif %}
+                                  <span class="badge bg-label-{{ color }}">{{ x.project_status }}</span>
+                                </td> -->
+                                <td>
+                                  <a href="{{ url_for('project.project_actionable_info', taskid=x.actionable_id, project_item_id=x.project_item_id) }}" class="btn btn-primary btn-sm"><i class="bx bx-folder-open"></i></a>
+                                  {% set count_feedback = x.actionable_id | count_actionable_comment %}
+                                  
+                                  {% if count_feedback.data.count | int != 0 %}
+                                  <small><i class="bx bx-comment-dots"></i> {{ count_feedback.data.count | int }}</small>
+                                  {% endif %}
+                                </td>
+                              </tr>
+
+                              {% endfor %}
+                            {% endif %}
                             
                           </tbody>
                         </table>
@@ -55,101 +82,4 @@
 {% endblock %}
 
 
-{% block scripts %}
-<script type="text/javascript">
-  const taskview = () =>{
-    $('#taskview').modal('show')
-  }
-
-  const addfeedback = ()=>{
-    elem = document.getElementById('addfeedback')
-    if (elem.style.display == 'none') {
-      elem.style.display = 'block';
-    }else{
-      elem.style.display = 'none'
-    }
-  }
-</script>
-{% endblock %}
-
-  {% block modals %}
-  <div class="modal fade" id="taskview" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-md" role="document">
-      <form class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="backDropModalTitle">Kalakuta project</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row g-2">
-            <div class="col-md">
-              <small class="text-muted">TASK DETAILS</small>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna aliqua.</p>
-              <button class="btn btn-outline-primary btn-sm" onclick="addfeedback()"><i class="bx bx-plus"></i> add feedback</button>
-              <button class="btn btn-outline-primary btn-sm">update status</button>
-
-              <div id="addfeedback" style="display: none">
-                <div class="divider divider-light">
-                  <div class="divider-text">Add feedback</div>
-                </div>
-                <form method="post">
-                  <div class="form-group">
-                    <label>Feedback</label>
-                    <textarea class="form-control"></textarea>
-                  </div>
-                  <div class="form-group mt-1">
-                    <button class="btn btn-primary btn-sm">Submit</button>
-                  </div>
-                </form>
-              </div>
-
-
-              <div class="divider divider-primary">
-                <div class="divider-text">Other feedback</div>
-              </div>
-
-
-              <ul class="p-0 m-0">
-                {% for x in range(3) %}
-                <li class="d-flex mb-4 pb-1">
-                  <div class="avatar flex-shrink-0 me-3">
-                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
-                  </div>
-                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 p-2 border border-light">
-                    <div class="me-2">
-                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
-                        <small class="mt-1" style="float: right; font-weight: bold;"> 03/06/2023 10:54:23</small>
-                      </small>
-                    </div>
-                  </div>
-                </li>
-                {% endfor %}
-                <li class="d-flex mb-4 pb-1">
-                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between p-2 border border-light">
-                    <div class="me-2">
-                      <small class="text-muted d-block mb-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</small>
-                    </div>
-                  </div>
-                  <div class="avatar flex-shrink-0 me-3 ml-5" style="margin-left: 20px;">
-                    <img src="{{ url_for('static', filename='assets/img/avatars/5.png') }}" alt="User" class="rounded" />
-                  </div>
-                </li>
-              </ul>
-
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-          Close
-          </button>
-          <button type="button" class="btn btn-primary">Save</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  {% endblock %}
 

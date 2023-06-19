@@ -1,10 +1,16 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, Response
 from sales import baseURL
+from flask_login import current_user
 import requests
 
 department = Blueprint('department', __name__, url_prefix='/', template_folder='templates')
 
 menu = 'department'
+
+@department.before_request
+def chk_session():
+    if not current_user.is_authenticated:
+        return redirect(url_for('user.auth_login', next=request.url))
 
 
 @department.get('/soassales/v1/department-list')
